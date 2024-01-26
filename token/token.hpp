@@ -6,7 +6,6 @@
 #include "file.hpp"
 #include "operator.hpp"
 
-class File;
 
 class Token {
 private:
@@ -16,30 +15,33 @@ private:
     IDENTIFIER,
     INT,
     STRING,
+    BOOL,
     IF,
     FOR,
-    FUNC,
+    FUNCTION,
     RETURN,
-    TRUE,
-    FALSE
+    OPERATOR
   };
 
-  std::shared_ptr<File> srcFile;
+  std::shared_ptr<File> srcfile;
   int ch_position;
   int ch_line;
   TokenType toktype;
   std::string literal;
+  OperatorPtr op;
 
 public:
-  Token(std::shared_ptr<File> srcFile, const std::string& input, int charPosition, int charLine, TokenType tokType, OperatorPtr op);
+  Token::Token(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op=OperatorPtr(nullptr));
   ~Token();
 
   TokenType TokenType() const;
   int CharPosition() const;
-  std::string Text() const;
   int CharLine() const;
+  std::string Text() const;
 };
 
 typedef std::shared_ptr<Token> TokenPtr;
+
+TokenPtr GenerateToken(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op=OperatorPtr(nullptr));
 
 #endif

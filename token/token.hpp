@@ -6,23 +6,22 @@
 #include "file.hpp"
 #include "operator.hpp"
 
+enum class TokenType {
+  EOL,
+  INVALID,
+  IDENTIFIER,
+  INT,
+  STRING,
+  BOOL,
+  IF,
+  FOR,
+  FUNCTION,
+  RETURN,
+  OPERATOR
+};
 
 class Token {
 private:
-  enum TokenType {
-    EOL,
-    INVALID,
-    IDENTIFIER,
-    INT,
-    STRING,
-    BOOL,
-    IF,
-    FOR,
-    FUNCTION,
-    RETURN,
-    OPERATOR
-  };
-
   std::shared_ptr<File> srcfile;
   int ch_position;
   int ch_line;
@@ -31,10 +30,10 @@ private:
   OperatorPtr op;
 
 public:
-  Token::Token(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op=OperatorPtr(nullptr));
+  Token(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op);
   ~Token();
 
-  TokenType TokenType() const;
+  TokenType Type() const;
   int CharPosition() const;
   int CharLine() const;
   std::string Text() const;
@@ -42,6 +41,6 @@ public:
 
 typedef std::shared_ptr<Token> TokenPtr;
 
-TokenPtr GenerateToken(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op=OperatorPtr(nullptr));
+TokenPtr GenerateToken(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op);
 
 #endif

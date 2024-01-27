@@ -1,36 +1,34 @@
 #include "token.hpp"
 
-Token::Token::Token(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op=OperatorPtr(nullptr)) {
+Token::Token(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op) {
     this->srcfile = src_file;
-    this->input = input;
+    this->literal = input;
     this->ch_position = char_position;
     this->ch_line = char_line;
     this->toktype = toktype;
     this->op = op;
-}
+};
 
 Token::~Token() {
 
-}
+};
 
-Token::TokenType TokenType() const {
+TokenType Token::Type() const {
     return toktype;
 }
 
-int CharPosition() const {
+int Token::CharPosition() const {
     return ch_position;
 }
 
-int CharLine() const {
+int Token::CharLine() const {
     return ch_line;
 }
 
-std::string Text() const {
-    return input;
+std::string Token::Text() const {
+    return literal;
 }
 
-TokenPtr GenerateToken(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line,
-                         TokenType toktype, OperatorPtr op=OperatorPtr(nullptr)) {
-    return TokenPtr(new Token(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line,
-                             TokenType toktype, OperatorPtr op=OperatorPtr(nullptr)))
+TokenPtr GenerateToken(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op) {
+    return TokenPtr(new Token(src_file, input, char_position, char_line, toktype, op));
 }

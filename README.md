@@ -1,9 +1,16 @@
 # Parser
 This is a programming language project that is **not working**. But will be aiming to be fully working.
-It's a project built tp understand the concept of how lexers and parsers work in detail.
+It's a project built to understand the concept of how lexers and parsers work in detail.
 
 ## How to build and execute the program
+### Prerequisit
+- CMake
+- GCC/G++
+
+### Installation
 ```sh
+git clone https://github.com/daeisbae/Parser.git
+cd Parser
 cmake .
 cmake --build .
 chmod +x Parser
@@ -14,8 +21,9 @@ chmod +x Parser
 ```
 Parser
 ├── CMakeLists.txt
-├── file.cpp
-├── file.hpp                // Read the file that contains the code
+├── io                      // Read the file that contains the code
+│   ├── file.cpp
+│   └── file.hpp
 ├── lexer                   // Read the text of the code and convert to token.
 │   ├── lexer.cpp
 │   └── lexer.hpp
@@ -26,6 +34,9 @@ Parser
 │   └── parser.hpp
 ├── README.md
 ├── rmcmake.sh
+├── stringutil              // Utility for string manipulation
+│   ├── stringutil.cpp
+│   └── stringutil.hpp
 └── token                   // Generate Token and define Token type
     ├── operator.cpp
     ├── operator.hpp

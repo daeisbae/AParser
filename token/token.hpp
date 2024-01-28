@@ -3,7 +3,7 @@
 
 #include <string>
 #include <memory>
-#include "../io/file.hpp"
+#include "file.hpp"
 #include "operator.hpp"
 
 enum class TokenType {

@@ -2,23 +2,27 @@
 #define FILE_H
 
 #include <string>
+#include <fstream>
+#include <memory>
 
 class File {
 private:
     std::string filename;
     std::string filedata;
-    int maxline;
-    int currline;
 
 public:
     File(std::string filename);
     ~File();
 
-    std::string Filename();
-    std::string ReadLine();
-    void LoadFile();
+    std::string ReadLine(const int line) const;
 };
 
+class FileNotOpenedException : public std::exception {
+public:
+    std::string what() {
+        return "File Not Opened";
+    }
+};
 
 typedef std::shared_ptr<File> FilePtr;
 

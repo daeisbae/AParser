@@ -9,3 +9,5 @@ find . -name test_stringutil -delete
 
 # Remove gtest package
 find . -name '_deps' -type d -exec rm -r {} +
+find . -name lib -delete
+find . -name bin -delete

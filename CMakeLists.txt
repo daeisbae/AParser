@@ -3,7 +3,7 @@ project(AParser)
 
 # Set to C++17 Standard
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 # Include sub-directories
 add_subdirectory(file)
@@ -14,7 +14,7 @@ add_subdirectory(token)
 add_subdirectory(operator)
 add_subdirectory(testing)
 
-# Test - StringUtil
+# Test
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -23,10 +23,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 enable_testing()
 
-# Test - Token
-# add_executable(test_token "${CMAKE_CURRENT_SOURCE_DIR}/testing/test_token.cpp")
-# target_link_libraries(test_token PRIVATE token file stringutil operator)
-
 # Release Binary
 add_executable(AParser "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 target_link_libraries(AParser PRIVATE token stringutil parser lexer file operator)
+target_compile_options(AParser PRIVATE -Wall -Wextra -Wpedantic -Werror)

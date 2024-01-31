@@ -12,14 +12,19 @@ add_subdirectory(parser)
 add_subdirectory(stringutil)
 add_subdirectory(token)
 add_subdirectory(operator)
-add_subdirectory(test)
+add_subdirectory(testing)
 
 # Test - StringUtil
-# add_executable(test_stringutil "${CMAKE_CURRENT_SOURCE_DIR}/test/test_stringutil.cpp")
-# target_link_libraries(test_stringutil PRIVATE stringutil)
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  DOWNLOAD_EXTRACT_TIMESTAMP false
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip)
+FetchContent_MakeAvailable(googletest)
+enable_testing()
 
 # Test - Token
-# add_executable(test_token "${CMAKE_CURRENT_SOURCE_DIR}/test/test_token.cpp")
+# add_executable(test_token "${CMAKE_CURRENT_SOURCE_DIR}/testing/test_token.cpp")
 # target_link_libraries(test_token PRIVATE token file stringutil operator)
 
 # Release Binary

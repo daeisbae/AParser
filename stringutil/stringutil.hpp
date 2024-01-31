@@ -4,6 +4,7 @@
 #include <string>
 
 // It's a function that works like split() in python.
+// Line Starts From 1 (Obviously!)
 // Delimits the "\n" keyword to split the next line.
 std::string ExtractTextOfLine(std::string text, const int line);
 

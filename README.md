@@ -45,10 +45,9 @@ AParser
 │   ├── CMakeLists.txt
 │   ├── stringutil.cpp
 │   └── stringutil.hpp
-├── test
+├── testing
 │   ├── CMakeLists.txt
 │   ├── test_stringutil.cpp
-│   └── test_token.cpp
 └── token                   // Generate Token and define Token type
     ├── CMakeLists.txt
     ├── token.cpp

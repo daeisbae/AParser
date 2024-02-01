@@ -12,8 +12,3 @@ TEST(ExtractTextOfLine, SplitingLineProperlyTesting) {
 TEST(ExtractTextOfLine, InvalidLineNumberTesting) {
     EXPECT_THROW(ExtractTextOfLine("Hello", 2), LineOutOfBoundException);
 }
-
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

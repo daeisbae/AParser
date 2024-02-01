@@ -4,9 +4,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 # add_library(testing)
 
-add_executable(test_stringutil test_stringutil.cpp)
-target_link_libraries(test_stringutil gtest_main stringutil)
-target_compile_options(test_stringutil PRIVATE -Wall -Wextra -Wpedantic -Werror)
+file(GLOB_RECURSE TESTING_CPP CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+
+add_executable(test_main ${TESTING_CPP})
+target_link_libraries(test_main gtest_main stringutil lexer token operator)
+target_compile_options(test_main PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 include(GoogleTest)
-gtest_discover_tests(test_stringutil)
+gtest_discover_tests(test_main)

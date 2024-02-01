@@ -5,7 +5,7 @@ find . -name Makefile -delete
 
 # Remove Executable
 find . -name AParser -delete
-find . -name test_stringutil -delete
+find . -name test_main -delete
 
 # Remove gtest package
 find . -name '_deps' -type d -exec rm -r {} +

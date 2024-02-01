@@ -34,4 +34,4 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       # Run the generated testing executable
-      run: ./testing/test_stringutil
+      run: ./testing/test_main

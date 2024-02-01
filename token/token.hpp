@@ -10,7 +10,9 @@ enum class TokenType {
   EOL,
   INVALID,
   IDENTIFIER,
-  INT,
+  WHITESPACE,
+  SET,
+  INTEGER,
   STRING,
   BOOL,
   IF,
@@ -22,25 +24,24 @@ enum class TokenType {
 
 class Token {
 private:
-  std::shared_ptr<File> srcfile;
-  int ch_position;
-  int ch_line;
   TokenType toktype;
-  std::string literal;
+  std::string value;
   OperatorPtr op;
 
 public:
-  Token(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op);
+  Token(const std::string& input, TokenType toktype, OperatorPtr op);
   ~Token();
 
   TokenType Type() const;
-  int CharPosition() const;
-  int CharLine() const;
   std::string Text() const;
+
+  bool operator==(const Token& token) {
+    return Type() == token.Type() && Text() == token.Text();
+  };
 };
 
 typedef std::shared_ptr<Token> TokenPtr;
 
-TokenPtr GenerateToken(std::shared_ptr<File> src_file, const std::string& input, int char_position, int char_line, TokenType toktype, OperatorPtr op);
+TokenPtr GenerateToken(const std::string& input, TokenType toktype, OperatorPtr op);
 
 #endif

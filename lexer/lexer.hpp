@@ -37,7 +37,7 @@ public:
 
 class WrongLexingException : public std::exception {
 public:
-    std::string what() {
+    const char* what() const noexcept override {
         return "Unexpected value in the line.";
     }
 };

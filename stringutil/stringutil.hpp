@@ -10,7 +10,7 @@ std::string ExtractTextOfLine(std::string text, const int line);
 
 class LineOutOfBoundException : public std::exception {
 public:
-    std::string what() {
+    const char* what() const noexcept override {
         return "Line number is out of the bound.";
     }
 };

@@ -19,7 +19,7 @@ public:
 
 class FileNotOpenedException : public std::exception {
 public:
-    std::string what() {
+    const char* what() const noexcept override {
         return "File Not Opened";
     }
 };

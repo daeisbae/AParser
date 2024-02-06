@@ -1,8 +1,9 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
-#include <string>
 #include <memory>
+#include <string>
+
 #include "file.hpp"
 #include "operator.hpp"
 
@@ -14,34 +15,44 @@ enum class TokenType {
   SET,
   INTEGER,
   STRING,
-  BOOL,
+  TRUE,
+  FALSE,
   IF,
   FOR,
   FUNCTION,
   RETURN,
-  OPERATOR
+  OPERATOR,
 };
 
 class Token {
-private:
+ private:
   TokenType toktype;
   std::string value;
   OperatorPtr op;
 
-public:
+ public:
   Token(const std::string& input, TokenType toktype, OperatorPtr op);
   ~Token();
 
   TokenType Type() const;
   std::string Text() const;
 
-  bool operator==(const Token& token) {
+  static std::string PrintTokenType(TokenType toktype);
+
+  bool operator==(const Token& token) const {
     return Type() == token.Type() && Text() == token.Text();
   };
+
+  friend std::ostream& operator<<(std::ostream& out, const Token& token) {
+    out << "Token( TokenType: " << PrintTokenType(token.toktype) << " Value: \'"
+        << token.value << "\' )";
+    return out;
+  }
 };
 
 typedef std::shared_ptr<Token> TokenPtr;
 
-TokenPtr GenerateToken(const std::string& input, TokenType toktype, OperatorPtr op);
+TokenPtr GenerateToken(const std::string& input, TokenType toktype,
+                       OperatorPtr op);
 
 #endif

@@ -11,7 +11,7 @@
 Lexer::Lexer(FilePtr fileptr) {
   this->file = fileptr;
   line = 1;
-  textqueue = ConvertStringToQueue(fileptr->ReadLine(line));
+  textqueue = ConvertStringToQueue(fileptr->Read());
 }
 
 Lexer::Lexer(std::string input) {
@@ -151,11 +151,4 @@ TokenPtr Lexer::NextToken() {
   // textqueue.pop();
 
   return tokptr;
-}
-
-void Lexer::ReadNextLine() {
-  if (file == nullptr)
-    throw NullFileMemberException("No file inside file member");
-
-  file->ReadLine(++line);
 }

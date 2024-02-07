@@ -34,9 +34,6 @@ class Lexer {
 
   // Return the next keyword in token pointer (TokenPtr)
   TokenPtr NextToken();
-
-  // If there's file member, read next line.
-  void ReadNextLine();
 };
 
 class WrongLexingException : public std::exception {

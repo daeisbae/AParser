@@ -1,14 +1,35 @@
+#include <gtest/gtest.h>
+
+#include <queue>
 #include <string>
 
-#include <gtest/gtest.h>
 #include "stringutil.hpp"
 
-
-TEST(ExtractTextOfLine, SplitingLineProperlyTesting) {
-    EXPECT_EQ(ExtractTextOfLine("Good\tDay\n2You", 1), "Good\tDay");  
-    EXPECT_EQ(ExtractTextOfLine("Hello\nWorld\nMyself", 3), "Myself");
+TEST(StringUtilTest, ConvertCharToString) {
+  char input = 'a';
+  std::string expected = "a";
+  std::string result = ConvertCharToString(input);
+  EXPECT_EQ(result, expected);
 }
 
-TEST(ExtractTextOfLine, InvalidLineNumberTesting) {
-    EXPECT_THROW(ExtractTextOfLine("Hello", 2), LineOutOfBoundException);
+TEST(StringUtilTest, ConvertStringToQueue) {
+  std::string input = "hello";
+  std::queue<char> expected;
+  std::array<char, 6> expected_arr{'h', 'e', 'l', 'l', 'o', '\0'};
+
+  for (char ch : expected_arr) {
+    expected.push(ch);
+  }
+
+  std::queue<char> result = ConvertStringToQueue(input);
+
+  while (!expected.empty() && !result.empty()) {
+    EXPECT_EQ(expected.front(), result.front());
+    expected.pop();
+    result.pop();
+  }
+
+  // Check that both queues are empty after popping all elements
+  EXPECT_TRUE(expected.empty());
+  EXPECT_TRUE(result.empty());
 }

@@ -1,6 +1,7 @@
 #include "lexer.hpp"
 
 #include <cctype>
+#include <sstream>
 #include <string>
 
 #include "file.hpp"
@@ -145,10 +146,12 @@ TokenPtr Lexer::NextToken() {
       }
       break;
     default:
-      throw WrongLexingException("No matching char in NextToken()");
+      std::stringstream ssInvalidTokMsg;
+      ssInvalidTokMsg << "Token: \'" << textqueue.front()
+                      << "\' is not allowed";
+      throw WrongLexingException(ssInvalidTokMsg.str());
       break;
   }
-  // textqueue.pop();
 
   return tokptr;
 }

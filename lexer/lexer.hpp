@@ -22,6 +22,8 @@ class Lexer {
   // Parse the literal (variable/function naming)
   std::string readLiteral();
 
+  std::string readOp();
+
   std::string readWhitespace();
 
  public:

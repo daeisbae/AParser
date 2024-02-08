@@ -1,32 +1,11 @@
 #include "operator.hpp"
 
+#include <sstream>
+
 Operator::Operator(std::string input) {
   this->value = input;
 
-  if (input == "+")
-    optype = OperatorType::PLUS;
-  else if (input == "-")
-    optype = OperatorType::MINUS;
-  else if (input == "*")
-    optype = OperatorType::STAR;
-  else if (input == "/")
-    optype = OperatorType::SLASH;
-  else if (input == "(")
-    optype = OperatorType::L_PARENTHESIS;
-  else if (input == ")")
-    optype = OperatorType::R_PARENTHESIS;
-  else if (input == "{")
-    optype = OperatorType::L_BRACE;
-  else if (input == "}")
-    optype = OperatorType::R_BRACE;
-  else if (input == "=")
-    optype = OperatorType::ASSIGN;
-  else if (input == "==")
-    optype = OperatorType::EQUAL;
-  else if (input == "!=")
-    optype = OperatorType::NOT_EQUAL;
-  else
-    optype = OperatorType::INVALID;
+  this->optype = GetOperatorType(input);
 
   fillOperatorMembers();
 }
@@ -59,6 +38,10 @@ void Operator::fillOperatorMembers() {
       precedence = 5;
       overloadable = false;
       break;
+    case OperatorType::NOT:
+      precedence = 5;
+      overloadable = true;
+      break;
     case OperatorType::L_PARENTHESIS:
     case OperatorType::R_PARENTHESIS:
       precedence = 4;
@@ -82,6 +65,38 @@ void Operator::fillOperatorMembers() {
       precedence = 7;
       overloadable = false;
   }
+}
+
+OperatorType Operator::GetOperatorType(std::string input) {
+  if (input == "+")
+    return OperatorType::PLUS;
+  if (input == "-")
+    return OperatorType::MINUS;
+  if (input == "*")
+    return OperatorType::STAR;
+  if (input == "/")
+    return OperatorType::SLASH;
+  if (input == "(")
+    return OperatorType::L_PARENTHESIS;
+  if (input == ")")
+    return OperatorType::R_PARENTHESIS;
+  if (input == "{")
+    return OperatorType::L_BRACE;
+  if (input == "}")
+    return OperatorType::R_BRACE;
+  if (input == "=")
+    return OperatorType::ASSIGN;
+  if (input == "==")
+    return OperatorType::EQUAL;
+  if (input == "!")
+    return OperatorType::NOT;
+  if (input == "!=")
+    return OperatorType::NOT_EQUAL;
+  
+  std::stringstream ssInvalidOpMsg;
+  ssInvalidOpMsg << "Operator: \'" << input
+                      << "\' is not allowed";
+  throw InvalidOperatorTypeException(ssInvalidOpMsg.str());
 }
 
 OperatorPtr GenerateOp(const std::string& input) {

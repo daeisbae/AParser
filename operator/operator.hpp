@@ -8,6 +8,7 @@ enum class OperatorType {
   // General
   ASSIGN,
   INVALID,
+  NOT,
 
   // Calculation
   PLUS,
@@ -42,10 +43,22 @@ class Operator {
   Operator(std::string input, OperatorType opType);
   ~Operator();
 
+  static OperatorType GetOperatorType(std::string input);
+
   OperatorType Type() const;
   std::string Text() const;
   bool IsOverloadable() const;
   int Precedence() const;
+};
+
+class InvalidOperatorTypeException : public std::exception {
+ private:
+  std::string errinfo;
+
+ public:
+  InvalidOperatorTypeException(std::string err) : errinfo(err){};
+
+  const char* what() const noexcept override { return errinfo.c_str(); }
 };
 
 typedef std::shared_ptr<Operator> OperatorPtr;

@@ -68,6 +68,32 @@ std::string Lexer::readLiteral() {
   return str_val;
 }
 
+std::string Lexer::readOp() {
+  std::string allowed_op = "(){}!=+-*/";
+  if(allowed_op.find(textqueue.front()) == std::string::npos) throw WrongLexingException("Allowed Operator not found");
+
+  std::string op_str;
+  op_str.push_back(textqueue.front());
+  textqueue.pop();
+
+  bool isMultiplePunctuationAllowed = Operator(op_str).IsOverloadable();
+
+  // This design will let 1-2 chars of punct in one operator.
+  if(!isMultiplePunctuationAllowed) return op_str;
+
+  op_str.push_back(textqueue.front());
+  
+  // Constructor validate Operator punctuation. if err, remove the operator 
+  try {
+    Operator optest(op_str);
+    textqueue.pop();
+  } catch(InvalidOperatorTypeException) {
+    op_str.pop_back();
+  }
+
+  return op_str;
+}
+
 std::string Lexer::readWhitespace() {
   std::string str_val;
   if (!isspace(textqueue.front()))
@@ -101,7 +127,7 @@ TokenPtr Lexer::NextToken() {
   std::string textval;
 
   switch (static_cast<int>(textqueue.front())) {
-    case 0:  // NULL terminatorP
+    case 0:  // NULL terminator
       tokptr = GenerateToken("", TokenType::EOL, OperatorPtr(nullptr));
       break;
     case 9:   // \t
@@ -109,6 +135,7 @@ TokenPtr Lexer::NextToken() {
       tokptr = GenerateToken(readWhitespace(), TokenType::WHITESPACE,
                              OperatorPtr(nullptr));
       break;
+    case 33:   // !
     case 40:   // (
     case 41:   // )
     case 42:   // *
@@ -118,11 +145,8 @@ TokenPtr Lexer::NextToken() {
     case 61:   // =
     case 123:  // {
     case 125:  // }
-               // TODO: Consider == and != cases
-      tokptr = GenerateToken(
-          ConvertCharToString(textqueue.front()), TokenType::OPERATOR,
-          GenerateOp(ConvertCharToString(textqueue.front())));
-      textqueue.pop();
+      textval = readOp();
+      tokptr = GenerateToken(textval, TokenType::OPERATOR, GenerateOp(textval));
       break;
     case 34:  // "
       tokptr =

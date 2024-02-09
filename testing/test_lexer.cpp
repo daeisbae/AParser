@@ -6,6 +6,14 @@
 #include "operator.hpp"
 #include "token.hpp"
 
+TEST(LexerTest, EmptyInput) {
+  Lexer test1 = Lexer("");
+
+  // 1
+  EXPECT_EQ(*(test1.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+}
+
 TEST(LexerTest, AssignIntegerToVariable) {
   Lexer test1 = Lexer("set hello = 2");
 
@@ -115,4 +123,92 @@ TEST(LexerTest, Function) {
   EXPECT_EQ(*(test1.NextToken()),
             *(GenerateToken("}", TokenType::OPERATOR,
                             GenerateOp("}", OperatorType::R_BRACE))));
+
+  EXPECT_EQ(*(test1.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+}
+
+TEST(LexerTest, String) {
+  // "Hello \" World "
+  Lexer test1 = Lexer("\"Hello \\\" World \"");
+
+  // 1
+  EXPECT_EQ(*(test1.NextToken()),
+            *(GenerateToken("Hello \" World ", TokenType::STRING, OperatorPtr(nullptr))));
+
+  // 2
+  EXPECT_EQ(*(test1.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+
+  // "1 - 2\"" + "\"Cool\""
+  Lexer test2 = Lexer("\"1 - 2\\\" \" + \"\\\"Cool\\\"\"");
+
+  // 1
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("1 - 2\" ", TokenType::STRING, OperatorPtr(nullptr))));
+
+  // 2
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken(" ", TokenType::WHITESPACE, OperatorPtr(nullptr))));
+
+  // 3
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("+", TokenType::OPERATOR,
+                            GenerateOp("+", OperatorType::PLUS))));
+
+  // 4
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken(" ", TokenType::WHITESPACE, OperatorPtr(nullptr))));
+
+  // 5
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("\"Cool\"", TokenType::STRING, OperatorPtr(nullptr))));
+
+  // 6  
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+
+  // "\"\"\"\"\"\""
+  Lexer test3 = Lexer("\"\"\"\"\"\"");
+
+  // 1
+  EXPECT_EQ(*(test3.NextToken()),
+            *(GenerateToken("", TokenType::STRING, OperatorPtr(nullptr))));
+
+  // 2
+  EXPECT_EQ(*(test3.NextToken()),
+            *(GenerateToken("", TokenType::STRING, OperatorPtr(nullptr))));
+
+  // 3
+  EXPECT_EQ(*(test3.NextToken()),
+            *(GenerateToken("", TokenType::STRING, OperatorPtr(nullptr))));
+
+  // 4
+  EXPECT_EQ(*(test3.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+
+  // "\"😂\""
+  Lexer test4 = Lexer("\"😂\"");
+
+  // 1
+  EXPECT_EQ(*(test4.NextToken()),
+            *(GenerateToken("😂", TokenType::STRING, OperatorPtr(nullptr))));
+
+  // 2
+  EXPECT_EQ(*(test4.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+}
+
+TEST(LexerTest, IncompleteStringException) {
+  // "\"Hello"
+  Lexer test1 = Lexer("\"Hello");
+
+  // 1
+  EXPECT_THROW(*(test1.NextToken()), WrongLexingException);
+
+  // "\"\\\\"Who is this\\\\""
+  Lexer test2 = Lexer("\"Hello");
+
+  // 1
+  EXPECT_THROW(*(test2.NextToken()), WrongLexingException);
 }

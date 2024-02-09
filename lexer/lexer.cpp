@@ -31,7 +31,19 @@ std::string Lexer::readStr() {
 
   std::string str_val;
 
-  while (!textqueue.empty() && textqueue.front() != '\"') {
+  while (!textqueue.empty()) {
+    if(textqueue.front() == '\0') {
+      std::stringstream ssInvalidStrMsg;
+      ssInvalidStrMsg << "Ending double quote not found after \"" << str_val << "\"";
+      throw WrongLexingException(ssInvalidStrMsg.str());
+    } 
+
+    // If it is the ending double quote of the string
+    if(textqueue.front() == '\"' && str_val.back() != '\\') break;
+    
+    // If it is the double quote inside the string
+    if(textqueue.front() == '\"' && str_val.back() == '\\') str_val.pop_back();
+
     str_val.push_back(textqueue.front());
     textqueue.pop();
   }

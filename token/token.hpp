@@ -36,6 +36,7 @@ class Token {
 
   TokenType Type() const;
   std::string Text() const;
+  OperatorPtr OpPtr() const;
 
   static std::string PrintTokenType(TokenType toktype);
 

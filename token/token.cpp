@@ -14,6 +14,8 @@ TokenType Token::Type() const { return toktype; }
 
 std::string Token::Text() const { return value; }
 
+OperatorPtr Token::OpPtr() const { return op; }
+
 std::string Token::PrintTokenType(TokenType toktype) {
   switch (toktype) {
     case TokenType::EOL:

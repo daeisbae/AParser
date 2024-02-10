@@ -49,6 +49,10 @@ class Operator {
   std::string Text() const;
   bool IsOverloadable() const;
   int Precedence() const;
+
+  bool operator==(const Operator& op) const {
+    return Type() == op.Type() && Text() == op.Text();
+  };
 };
 
 class InvalidOperatorTypeException : public std::exception {

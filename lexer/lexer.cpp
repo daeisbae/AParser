@@ -32,17 +32,18 @@ std::string Lexer::readStr() {
   std::string str_val;
 
   while (!textqueue.empty()) {
-    if(textqueue.front() == '\0') {
+    if (textqueue.front() == '\0') {
       std::stringstream ssInvalidStrMsg;
-      ssInvalidStrMsg << "Ending double quote not found after \"" << str_val << "\"";
+      ssInvalidStrMsg << "Ending double quote not found after \"" << str_val
+                      << "\"";
       throw WrongLexingException(ssInvalidStrMsg.str());
-    } 
+    }
 
     // If it is the ending double quote of the string
-    if(textqueue.front() == '\"' && str_val.back() != '\\') break;
-    
+    if (textqueue.front() == '\"' && str_val.back() != '\\') break;
+
     // If it is the double quote inside the string
-    if(textqueue.front() == '\"' && str_val.back() == '\\') str_val.pop_back();
+    if (textqueue.front() == '\"' && str_val.back() == '\\') str_val.pop_back();
 
     str_val.push_back(textqueue.front());
     textqueue.pop();
@@ -82,7 +83,8 @@ std::string Lexer::readLiteral() {
 
 std::string Lexer::readOp() {
   std::string allowed_op = "(){}!=+-*/";
-  if(allowed_op.find(textqueue.front()) == std::string::npos) throw WrongLexingException("Allowed Operator not found");
+  if (allowed_op.find(textqueue.front()) == std::string::npos)
+    throw WrongLexingException("Allowed Operator not found");
 
   std::string op_str;
   op_str.push_back(textqueue.front());
@@ -91,15 +93,15 @@ std::string Lexer::readOp() {
   bool isMultiplePunctuationAllowed = Operator(op_str).IsOverloadable();
 
   // This design will let 1-2 chars of punct in one operator.
-  if(!isMultiplePunctuationAllowed) return op_str;
+  if (!isMultiplePunctuationAllowed) return op_str;
 
   op_str.push_back(textqueue.front());
-  
-  // Constructor validate Operator punctuation. if err, remove the operator 
+
+  // Constructor validate Operator punctuation. if err, remove the operator
   try {
     Operator optest(op_str);
     textqueue.pop();
-  } catch(InvalidOperatorTypeException) {
+  } catch (InvalidOperatorTypeException) {
     op_str.pop_back();
   }
 

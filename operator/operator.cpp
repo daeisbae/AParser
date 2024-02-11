@@ -68,34 +68,21 @@ void Operator::fillOperatorMembers() {
 }
 
 OperatorType Operator::GetOperatorType(std::string input) {
-  if (input == "+")
-    return OperatorType::PLUS;
-  if (input == "-")
-    return OperatorType::MINUS;
-  if (input == "*")
-    return OperatorType::STAR;
-  if (input == "/")
-    return OperatorType::SLASH;
-  if (input == "(")
-    return OperatorType::L_PARENTHESIS;
-  if (input == ")")
-    return OperatorType::R_PARENTHESIS;
-  if (input == "{")
-    return OperatorType::L_BRACE;
-  if (input == "}")
-    return OperatorType::R_BRACE;
-  if (input == "=")
-    return OperatorType::ASSIGN;
-  if (input == "==")
-    return OperatorType::EQUAL;
-  if (input == "!")
-    return OperatorType::NOT;
-  if (input == "!=")
-    return OperatorType::NOT_EQUAL;
-  
+  if (input == "+") return OperatorType::PLUS;
+  if (input == "-") return OperatorType::MINUS;
+  if (input == "*") return OperatorType::STAR;
+  if (input == "/") return OperatorType::SLASH;
+  if (input == "(") return OperatorType::L_PARENTHESIS;
+  if (input == ")") return OperatorType::R_PARENTHESIS;
+  if (input == "{") return OperatorType::L_BRACE;
+  if (input == "}") return OperatorType::R_BRACE;
+  if (input == "=") return OperatorType::ASSIGN;
+  if (input == "==") return OperatorType::EQUAL;
+  if (input == "!") return OperatorType::NOT;
+  if (input == "!=") return OperatorType::NOT_EQUAL;
+
   std::stringstream ssInvalidOpMsg;
-  ssInvalidOpMsg << "Operator: \'" << input
-                      << "\' is not allowed";
+  ssInvalidOpMsg << "Operator: \'" << input << "\' is not allowed";
   throw InvalidOperatorTypeException(ssInvalidOpMsg.str());
 }
 

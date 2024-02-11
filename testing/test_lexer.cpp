@@ -134,7 +134,8 @@ TEST(LexerTest, String) {
 
   // 1
   EXPECT_EQ(*(test1.NextToken()),
-            *(GenerateToken("Hello \" World ", TokenType::STRING, OperatorPtr(nullptr))));
+            *(GenerateToken("Hello \" World ", TokenType::STRING,
+                            OperatorPtr(nullptr))));
 
   // 2
   EXPECT_EQ(*(test1.NextToken()),
@@ -144,8 +145,8 @@ TEST(LexerTest, String) {
   Lexer test2 = Lexer("\"1 - 2\\\" \" + \"\\\"Cool\\\"\"");
 
   // 1
-  EXPECT_EQ(*(test2.NextToken()),
-            *(GenerateToken("1 - 2\" ", TokenType::STRING, OperatorPtr(nullptr))));
+  EXPECT_EQ(*(test2.NextToken()), *(GenerateToken("1 - 2\" ", TokenType::STRING,
+                                                  OperatorPtr(nullptr))));
 
   // 2
   EXPECT_EQ(*(test2.NextToken()),
@@ -161,10 +162,10 @@ TEST(LexerTest, String) {
             *(GenerateToken(" ", TokenType::WHITESPACE, OperatorPtr(nullptr))));
 
   // 5
-  EXPECT_EQ(*(test2.NextToken()),
-            *(GenerateToken("\"Cool\"", TokenType::STRING, OperatorPtr(nullptr))));
+  EXPECT_EQ(*(test2.NextToken()), *(GenerateToken("\"Cool\"", TokenType::STRING,
+                                                  OperatorPtr(nullptr))));
 
-  // 6  
+  // 6
   EXPECT_EQ(*(test2.NextToken()),
             *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
 

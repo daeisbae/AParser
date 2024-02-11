@@ -6,4 +6,4 @@ file(GLOB_RECURSE PARSER_CPP CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cp
 
 target_sources(parser PRIVATE ${PARSER_CPP})
 target_include_directories(parser PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_libraries(parser PUBLIC token)
+target_link_libraries(parser PUBLIC token ast)

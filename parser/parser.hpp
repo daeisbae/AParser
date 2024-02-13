@@ -10,13 +10,32 @@ class Parser {
  private:
   std::queue<TokenPtr> tokqueue;
 
+  // Preview the next token
+  TokenPtr peek();
+
+  // Check if the token matches the expected TokenType | OperatorType
+  // If it match, return TokenPtr
+  // Else throw Exception
+  TokenPtr expectedTokenType(TokenType expectedTokType);
+  TokenPtr expectedTokenType(OperatorType expectedOpType);
+
   // Return the peeked value and pops the tokqueue
   TokenPtr eat();
 
   StatementPtr parseStatement();
   ExpressionPtr parseExpression();
+
+  // Reads the token and assign the value as expression
   ExpressionPtr parsePrimaryExpression();
+
+  // + and - operations
   ExpressionPtr parseAdditionExpression();
+
+  // * and / operations
+  ExpressionPtr parseMultiplicationExpression();
+
+  // Read whitespaces if it exists
+  ExpressionPtr parseWhitespaceExpression();
 
  public:
   Parser(std::queue<TokenPtr> tokenQueue);

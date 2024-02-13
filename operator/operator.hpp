@@ -53,6 +53,11 @@ class Operator {
   bool operator==(const Operator& op) const {
     return Type() == op.Type() && Text() == op.Text();
   };
+
+  friend std::ostream& operator<<(std::ostream& out, const Operator& op) {
+    out << "Operator( Value: \'" << op.value << "\' )";
+    return out;
+  };
 };
 
 class InvalidOperatorTypeException : public std::exception {

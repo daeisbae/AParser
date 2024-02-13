@@ -13,6 +13,30 @@ TokenPtr Parser::eat() {
   return token;
 }
 
+TokenPtr Parser::peek() { return tokqueue.front(); }
+
+TokenPtr Parser::expectedTokenType(OperatorType expectedOpType) {
+  TokenPtr currtok = peek();
+  std::stringstream ssInvalidTokMsg;
+
+  if (currtok->OpPtr()->Type() == expectedOpType) return currtok;
+
+  ssInvalidTokMsg << "Expected: \')\' Got Operator: \'" << *(currtok->OpPtr())
+                  << "\' is not allowed";
+  throw UnexpectedTokenParsedException(ssInvalidTokMsg.str());
+}
+
+TokenPtr Parser::expectedTokenType(TokenType expectedTokType) {
+  TokenPtr currtok = peek();
+  std::stringstream ssInvalidTokMsg;
+
+  if (currtok->Type() == expectedTokType) return currtok;
+  ssInvalidTokMsg << "Expected: \')\' Got Token: \'" << *(currtok)
+                    << "\' is not allowed";
+
+  throw UnexpectedTokenParsedException(ssInvalidTokMsg.str());
+}
+
 Program Parser::ProduceAST() {
   Program program = Program();
 
@@ -28,12 +52,12 @@ StatementPtr Parser::parseStatement() { return parseExpression(); }
 ExpressionPtr Parser::parseExpression() { return parseAdditionExpression(); }
 
 ExpressionPtr Parser::parsePrimaryExpression() {
-  const TokenPtr currtok = tokqueue.front();
+  std::stringstream ssInvalidTokMsg;
   ExpressionPtr returnedExpr;
 
   // How it works: Read one token (then pop the queue) to convert to an
   // expression.
-  switch (currtok->Type()) {
+  switch (peek()->Type()) {
     case TokenType::IDENTIFIER:
       returnedExpr = ExpressionPtr(new IdentifierExpression(eat()->Text()));
       break;
@@ -41,11 +65,27 @@ ExpressionPtr Parser::parsePrimaryExpression() {
       returnedExpr =
           ExpressionPtr(new IntegerExpression(std::stoi(eat()->Text())));
       break;
-    case TokenType::EOL:
+    case TokenType::WHITESPACE:
+      returnedExpr = ExpressionPtr(new WhitespaceExpression(eat()->Text()));
+      break;
+    case TokenType::OPERATOR:
+      switch (peek()->OpPtr()->Type()) {
+        case OperatorType::L_PARENTHESIS:
+          eat();
+          parseWhitespaceExpression();
+          returnedExpr = parseExpression();
+          parseWhitespaceExpression();
+          expectedTokenType(OperatorType::R_PARENTHESIS);
+          eat();
+          break;
+        default:
+          ssInvalidTokMsg << "Unexpected Operator: \'" << *(peek()->OpPtr())
+                          << "\' is not allowed";
+          throw UnexpectedTokenParsedException(ssInvalidTokMsg.str());
+      };
       break;
     default:
-      std::stringstream ssInvalidTokMsg;
-      ssInvalidTokMsg << "Unexpected Token: \'" << *(currtok)
+      ssInvalidTokMsg << "Unexpected Token: \'" << *peek()
                       << "\' is not allowed";
       throw UnexpectedTokenParsedException(ssInvalidTokMsg.str());
       break;
@@ -54,17 +94,45 @@ ExpressionPtr Parser::parsePrimaryExpression() {
 }
 
 ExpressionPtr Parser::parseAdditionExpression() {
-  ExpressionPtr left = parsePrimaryExpression();
-  TokenPtr operatorExpectedTok = tokqueue.front();
+  ExpressionPtr left = parseMultiplicationExpression();
+  parseWhitespaceExpression();
 
-  while (operatorExpectedTok->Type() != TokenType::EOL &&
-         (operatorExpectedTok->OpPtr()->Type() == OperatorType::PLUS ||
-          operatorExpectedTok->OpPtr()->Type() == OperatorType::MINUS)) {
+  while (peek()->Type() != TokenType::EOL &&
+         (peek()->OpPtr()->Type() == OperatorType::PLUS ||
+          peek()->OpPtr()->Type() == OperatorType::MINUS)) {
     const std::string opVal = eat()->Text();
-    ExpressionPtr right = parsePrimaryExpression();
+    parseWhitespaceExpression();
+    ExpressionPtr right = parseMultiplicationExpression();
+    parseWhitespaceExpression();
+
     left = ExpressionPtr(new BinaryExpression(left, opVal, right));
-    operatorExpectedTok = tokqueue.front();
   }
 
   return left;
+}
+
+ExpressionPtr Parser::parseMultiplicationExpression() {
+  ExpressionPtr left = parsePrimaryExpression();
+  parseWhitespaceExpression();
+
+  while (peek()->Type() != TokenType::EOL &&
+         (peek()->OpPtr()->Type() == OperatorType::STAR ||
+          peek()->OpPtr()->Type() == OperatorType::SLASH)) {
+    const std::string opVal = eat()->Text();
+    parseWhitespaceExpression();
+    ExpressionPtr right = parsePrimaryExpression();
+    parseWhitespaceExpression();
+
+    left = ExpressionPtr(new BinaryExpression(left, opVal, right));
+  }
+
+  return left;
+}
+
+ExpressionPtr Parser::parseWhitespaceExpression() {
+  TokenPtr currTok = tokqueue.front();
+  if (currTok->Type() == TokenType::WHITESPACE)
+    return ExpressionPtr(new WhitespaceExpression(eat()->Text()));
+
+  return ExpressionPtr(nullptr);
 }

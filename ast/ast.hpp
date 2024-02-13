@@ -16,6 +16,7 @@ enum class NodeType {
   IdentifierExpr,
   IntegerExpr,
   BinaryExpr,
+  WhitespaceExpr,
 };
 
 typedef std::shared_ptr<Statement> StatementPtr;
@@ -105,6 +106,24 @@ class IntegerExpression : public Expression {
   friend std::ostream& operator<<(std::ostream& out,
                                   const IntegerExpression& integerExpr) {
     integerExpr.PrintOstream(out);
+
+    return out;
+  }
+};
+
+class WhitespaceExpression : public Expression {
+ public:
+  WhitespaceExpression(std::string tokValue) : Value(tokValue){};
+
+  std::string Value;
+
+  NodeType Type() const override { return NodeType::WhitespaceExpr; }
+
+  void PrintOstream(std::ostream& out) const;
+
+  friend std::ostream& operator<<(std::ostream& out,
+                                  const WhitespaceExpression& whitespaceExpr) {
+    whitespaceExpr.PrintOstream(out);
 
     return out;
   }

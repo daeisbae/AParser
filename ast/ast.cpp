@@ -16,6 +16,9 @@ std::string NodeEnumToString(NodeType nodetype) {
     case NodeType::BinaryExpr:
       typestr = "BinaryExpression";
       break;
+    case NodeType::WhitespaceExpr:
+      typestr = "WhitespaceExpression";
+      break;
     default:
       typestr = "InvalidExpression";
       break;
@@ -62,4 +65,12 @@ void IntegerExpression::PrintOstream(std::ostream& out) const {
   out << "Value : " << Value;
 
   out << ")";
+}
+
+void WhitespaceExpression::PrintOstream(std::ostream& out) const {
+  out << NodeEnumToString(Type()) << " (";
+
+  out << "Value : '" << Value;
+
+  out << "' )";
 }

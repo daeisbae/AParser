@@ -46,6 +46,8 @@ std::string Token::PrintTokenType(TokenType toktype) {
       return "Return";
     case TokenType::OPERATOR:
       return "Operator";
+    case TokenType::NULLABLE:
+      return "Null";
     default:
       return "Unidentified Token";
   }

@@ -22,6 +22,7 @@ enum class TokenType {
   FUNCTION,
   RETURN,
   OPERATOR,
+  NULLABLE
 };
 
 class Token {

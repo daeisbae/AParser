@@ -129,6 +129,7 @@ TokenType Lexer::GetReservedKeywordTokenType(std::string keyword) const {
   if (keyword == "false") return TokenType::FALSE;
   if (keyword == "for") return TokenType::FOR;
   if (keyword == "return") return TokenType::RETURN;
+  if (keyword == "null") return TokenType::NULLABLE;
 
   return TokenType::INVALID;
 }

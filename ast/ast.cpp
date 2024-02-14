@@ -19,6 +19,9 @@ std::string NodeEnumToString(NodeType nodetype) {
     case NodeType::WhitespaceExpr:
       typestr = "WhitespaceExpression";
       break;
+    case NodeType::NullExpr:
+      typestr = "NullExpression";
+      break;
     default:
       typestr = "InvalidExpression";
       break;

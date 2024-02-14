@@ -20,8 +20,12 @@ chmod +x AParser
 ## Project Structure
 ```
 AParser
+├── ast                      // Defines the Abstract Syntax Tree (Expressions and Statements)
+│   ├── ast.cpp
+│   ├── ast.hpp
+│   └── CMakeLists.txt
 ├── CMakeLists.txt
-├── file                      // Read the file that contains the code
+├── file                     // Read the file that contains the code
 │   ├── CMakeLists.txt
 │   ├── file.cpp
 │   └── file.hpp
@@ -35,7 +39,7 @@ AParser
 │   ├── CMakeLists.txt
 │   ├── operator.cpp
 │   └── operator.hpp
-├── parser                  // Convert to AST Syntax
+├── parser                  // Converts to AST Syntax
 │   ├── CMakeLists.txt
 │   ├── parser.cpp
 │   └── parser.hpp
@@ -47,7 +51,9 @@ AParser
 │   └── stringutil.hpp
 ├── testing
 │   ├── CMakeLists.txt
-│   ├── test_stringutil.cpp
+│   ├── test_lexer.cpp
+│   ├── test_main.cpp
+│   └── test_stringutil.cpp
 └── token                   // Generate Token and define Token type
     ├── CMakeLists.txt
     ├── token.cpp

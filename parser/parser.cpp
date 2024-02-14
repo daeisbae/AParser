@@ -32,7 +32,7 @@ TokenPtr Parser::expectedTokenType(TokenType expectedTokType) {
 
   if (currtok->Type() == expectedTokType) return currtok;
   ssInvalidTokMsg << "Expected: \')\' Got Token: \'" << *(currtok)
-                    << "\' is not allowed";
+                  << "\' is not allowed";
 
   throw UnexpectedTokenParsedException(ssInvalidTokMsg.str());
 }
@@ -67,6 +67,10 @@ ExpressionPtr Parser::parsePrimaryExpression() {
       break;
     case TokenType::WHITESPACE:
       returnedExpr = ExpressionPtr(new WhitespaceExpression(eat()->Text()));
+      break;
+    case TokenType::NULLABLE:
+      eat();
+      returnedExpr = ExpressionPtr(new NullExpression());
       break;
     case TokenType::OPERATOR:
       switch (peek()->OpPtr()->Type()) {

@@ -74,3 +74,7 @@ void WhitespaceExpression::PrintOstream(std::ostream& out) const {
 
   out << "' )";
 }
+
+void NullExpression::PrintOstream(std::ostream& out) const {
+  out << NodeEnumToString(Type()) << " ( Value : 'NULL' )";
+}

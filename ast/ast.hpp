@@ -3,7 +3,6 @@
 
 #include <queue>
 #include <string>
-#include <vector>
 
 #include "token.hpp"
 
@@ -38,9 +37,10 @@ class Statement {
 
 class Program : public Statement {
  public:
-  Program() { Body = std::vector<StatementPtr>(); }
+  Program() { Body = std::queue<StatementPtr>(); }
+  Program(std::queue<StatementPtr> stmtVec) : Body(stmtVec){};
 
-  std::vector<StatementPtr> Body;
+  std::queue<StatementPtr> Body;
 
   NodeType Type() const override { return NodeType::Program; }
 

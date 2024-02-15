@@ -41,7 +41,7 @@ Program Parser::ProduceAST() {
   Program program = Program();
 
   while (tokqueue.front()->Type() != TokenType::EOL) {
-    program.Body.push_back(parseStatement());
+    program.Body.push(parseStatement());
   }
 
   return program;

@@ -32,7 +32,11 @@ std::string NodeEnumToString(NodeType nodetype) {
 void Program::PrintOstream(std::ostream& out) const {
   out << NodeEnumToString(Type()) << " {\n";
 
-  for (const StatementPtr statement : Body) {
+  std::queue<StatementPtr> copiedProgram = Body;
+
+  while (!copiedProgram.empty()) {
+    StatementPtr statement = copiedProgram.front();
+    copiedProgram.pop();
     statement->PrintOstream(out);
     out << "\n";
   }

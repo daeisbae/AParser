@@ -4,6 +4,7 @@
 
 #include "lexer.hpp"
 #include "parser.hpp"
+#include "runtime.hpp"
 #include "token.hpp"
 
 // Set limit of printing token from one lexer
@@ -37,10 +38,15 @@ int main() {
 
     tokqueue.push(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr)));
 
+    // Parse the token and produce Abstract Syntax Tree (AST)
     Parser parser = Parser(tokqueue);
     Program program = parser.ProduceAST();
 
-    std::cout << program << std::endl;
+    // Evaluate the AST and produce the result in string
+    Evaluater evaluater = Evaluater(program);
+    std::cout << evaluater.EvaluateProgram() << std::endl;
+
+    // Reset the token queue
     tokqueue = std::queue<TokenPtr>();
   } while (input != "exit");
 }

@@ -11,6 +11,7 @@ add_subdirectory(ast)
 add_subdirectory(file)
 add_subdirectory(lexer)
 add_subdirectory(parser)
+add_subdirectory(runtime)
 add_subdirectory(stringutil)
 add_subdirectory(token)
 add_subdirectory(operator)
@@ -27,7 +28,7 @@ enable_testing()
 
 # Release Binary
 add_executable(AParser "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
-target_link_libraries(AParser PRIVATE token stringutil parser lexer file operator ast)
+target_link_libraries(AParser PRIVATE token stringutil parser lexer file operator ast runtime)
 target_compile_options(AParser PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 # Find clang-format executable

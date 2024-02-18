@@ -8,20 +8,29 @@
 
 class Statement;
 class Program;
+class VariableDeclarationStatement;
 class Expression;
+class BinaryExpression;
+class IdentifierExpression;
+class IntegerExpression;
+class WhitespaceExpression;
+class NullExpression;
+
+typedef std::shared_ptr<Statement> StatementPtr;
+typedef std::shared_ptr<Expression> ExpressionPtr;
 
 enum class NodeType {
+  // Statement
   Program,
+  VariableDeclarationStmt,
+
+  // Expression
   IdentifierExpr,
   IntegerExpr,
   BinaryExpr,
   WhitespaceExpr,
   NullExpr,
 };
-
-typedef std::shared_ptr<Statement> StatementPtr;
-
-typedef std::shared_ptr<Expression> ExpressionPtr;
 
 std::string NodeEnumToString(NodeType nodetype);
 
@@ -141,6 +150,31 @@ class NullExpression : public Expression {
   friend std::ostream& operator<<(std::ostream& out,
                                   const NullExpression& nullExpr) {
     nullExpr.PrintOstream(out);
+
+    return out;
+  }
+};
+
+class VariableDeclarationStatement : public Statement {
+ public:
+  VariableDeclarationStatement(std::string identifier) {
+    Name = identifier;
+    Value = ExpressionPtr(new NullExpression());
+  };
+
+  VariableDeclarationStatement(std::string identifier, ExpressionPtr value)
+      : Name(identifier), Value(value){};
+
+  std::string Name;
+  ExpressionPtr Value;
+
+  NodeType Type() const override { return NodeType::VariableDeclarationStmt; }
+
+  void PrintOstream(std::ostream& out) const;
+
+  friend std::ostream& operator<<(
+      std::ostream& out, const VariableDeclarationStatement& varDeclStmt) {
+    varDeclStmt.PrintOstream(out);
 
     return out;
   }

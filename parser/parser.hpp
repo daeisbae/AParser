@@ -37,11 +37,17 @@ class Parser {
   // Read whitespaces if it exists
   ExpressionPtr parseWhitespaceExpression();
 
+  // Declaration Identifier
+  StatementPtr parseIdentifierDeclarationExpression();
+
+  // Assignment Identifier
+  // ExpressionPtr parseIdentifierAssignmentExpression();
+
  public:
-  Parser(std::queue<TokenPtr> tokenQueue);
+  Parser();
   ~Parser();
 
-  Program ProduceAST();
+  Program ProduceAST(std::queue<TokenPtr>& tokenQueue);
 };
 
 class UnexpectedTokenParsedException : public std::exception {

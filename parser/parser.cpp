@@ -1,10 +1,11 @@
 #include "parser.hpp"
 
+#include <memory>
 #include <sstream>
 
 #include "ast.hpp"
 
-Parser::Parser(std::queue<TokenPtr> tokenQueue) : tokqueue(tokenQueue) {}
+Parser::Parser(){};
 Parser::~Parser(){};
 
 TokenPtr Parser::eat() {
@@ -37,17 +38,29 @@ TokenPtr Parser::expectedTokenType(TokenType expectedTokType) {
   throw UnexpectedTokenParsedException(ssInvalidTokMsg.str());
 }
 
-Program Parser::ProduceAST() {
+Program Parser::ProduceAST(std::queue<TokenPtr>& tokenQueue) {
+  tokqueue = tokenQueue;
   Program program = Program();
 
   while (tokqueue.front()->Type() != TokenType::EOL) {
     program.Body.push(parseStatement());
   }
 
+  // Remove TokenType::EOL
+  eat();
+
   return program;
 }
 
-StatementPtr Parser::parseStatement() { return parseExpression(); }
+StatementPtr Parser::parseStatement() {
+  TokenPtr currtok = peek();
+  switch (currtok->Type()) {
+    case TokenType::SET:
+      return parseIdentifierDeclarationExpression();
+    default:
+      return parseExpression();
+  }
+}
 
 ExpressionPtr Parser::parseExpression() { return parseAdditionExpression(); }
 
@@ -139,4 +152,27 @@ ExpressionPtr Parser::parseWhitespaceExpression() {
     return ExpressionPtr(new WhitespaceExpression(eat()->Text()));
 
   return ExpressionPtr(nullptr);
+}
+
+StatementPtr Parser::parseIdentifierDeclarationExpression() {
+  expectedTokenType(TokenType::SET);
+  eat();
+  parseWhitespaceExpression();
+
+  ExpressionPtr parsedVar = parsePrimaryExpression();
+  std::shared_ptr<IdentifierExpression> varExpr =
+      std::dynamic_pointer_cast<IdentifierExpression>(parsedVar);
+  parseWhitespaceExpression();
+
+  if (peek()->Type() == TokenType::EOL)
+    return std::make_shared<VariableDeclarationStatement>(varExpr->Name);
+
+  expectedTokenType(OperatorType::ASSIGN);
+  eat();
+  parseWhitespaceExpression();
+
+  ExpressionPtr value = parsePrimaryExpression();
+  parseWhitespaceExpression();
+
+  return std::make_shared<VariableDeclarationStatement>(varExpr->Name, value);
 }

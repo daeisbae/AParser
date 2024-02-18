@@ -1,10 +1,54 @@
 #include "runtime.hpp"
 
 #include <sstream>
+#include <unordered_map>
 
-Evaluater::Evaluater(Program astProgram) : program(astProgram) {}
+Environment::Environment() {
+  variablemap = std::unordered_map<std::string, RuntimeValuePtr>();
+}
 
-std::string Evaluater::EvaluateProgram() {
+void Environment::DefineVariable(std::string name,
+                                 RuntimeValuePtr runtimeValue) {
+  std::unordered_map<std::string, RuntimeValuePtr>::iterator varLocIter =
+      variablemap.find(name);
+
+  if (varLocIter != variablemap.cend()) {
+    std::stringstream ssVariableAlreadyDeclaredMsg;
+    ssVariableAlreadyDeclaredMsg << "Variable : " << name
+                                 << " already declared";
+    throw VariableAlreadyDeclaredException(ssVariableAlreadyDeclaredMsg.str());
+  }
+
+  variablemap.insert(make_pair(name, runtimeValue));
+}
+
+void Environment::AssignVariable(std::string name,
+                                 RuntimeValuePtr runtimeValue) {
+  std::unordered_map<std::string, RuntimeValuePtr>::iterator varLocIter =
+      variablemap.find(name);
+
+  if (varLocIter == variablemap.cend()) {
+    std::stringstream ssVariableNotDeclaredMsg;
+    ssVariableNotDeclaredMsg << "Variable : " << name
+                             << " is not declared, hence not assignable";
+    throw VariableDoesNotExistException(ssVariableNotDeclaredMsg.str());
+  }
+
+  variablemap[name] = runtimeValue;
+}
+
+RuntimeValuePtr Environment::GetRuntimeValue(std::string name) {
+  std::unordered_map<std::string, RuntimeValuePtr>::iterator varLocIter =
+      variablemap.find(name);
+  if (varLocIter == variablemap.end()) return RuntimeValuePtr(nullptr);
+
+  return varLocIter->second;
+}
+
+Evaluater::Evaluater() { env = Environment(); }
+
+std::string Evaluater::EvaluateProgram(Program astProgram) {
+  program = astProgram;
   RuntimeValuePtr lasteval;
   std::queue<StatementPtr> stmtqueue = program.Body;
 
@@ -85,6 +129,30 @@ RuntimeValuePtr Evaluater::evaluate(StatementPtr currStmt) {
       matchValue = evaluateBinaryExpression(*binaryExpr);
       break;
     }
+    case NodeType::IdentifierExpr: {
+      std::shared_ptr<IdentifierExpression> identifierExpr =
+          std::dynamic_pointer_cast<IdentifierExpression>(currStmt);
+      if (!identifierExpr) {
+        ssInvalidStmtMsg
+            << "Failed to cast StatementPtr to IdentifierExpressionPtr : "
+            << currStmt;
+        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+      }
+      matchValue = env.GetRuntimeValue(identifierExpr->Name);
+      break;
+    }
+    case NodeType::VariableDeclarationStmt: {
+      std::shared_ptr<VariableDeclarationStatement> varDeclStmt =
+          std::dynamic_pointer_cast<VariableDeclarationStatement>(currStmt);
+      if (!varDeclStmt) {
+        ssInvalidStmtMsg << "Failed to cast StatementPtr to "
+                            "VariableDeclarationStatementPtr : "
+                         << currStmt;
+        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+      }
+      matchValue = evaluateDefiningIdentifierExpression(*varDeclStmt);
+      break;
+    }
     default:
       ssInvalidStmtMsg
           << "Unimplemented Statement(Expression) in Evaluate Expression : "
@@ -93,4 +161,12 @@ RuntimeValuePtr Evaluater::evaluate(StatementPtr currStmt) {
       break;
   }
   return matchValue;
+}
+
+RuntimeValuePtr Evaluater::evaluateDefiningIdentifierExpression(
+    VariableDeclarationStatement varDeclStmt) {
+  RuntimeValuePtr evalAssignedVal = evaluate(varDeclStmt.Value);
+  env.DefineVariable(varDeclStmt.Name, evalAssignedVal);
+
+  return evalAssignedVal;
 }

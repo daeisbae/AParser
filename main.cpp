@@ -14,10 +14,14 @@
 int main() {
   std::string input;
   std::queue<TokenPtr> tokqueue;
+  Parser parser = Parser();
+
+  Evaluater evaluater = Evaluater();
 
   do {
     std::cout << ">>> ";
     std::getline(std::cin, input);
+    if (input == "exit") return 0;
 
     Lexer lexer = Lexer(input);
     TokenPtr tok;
@@ -34,19 +38,23 @@ int main() {
       if (countLoop > PREVENT_LOOP_MAX_COUNT) break;
       countLoop++;
 #endif
-    } while ((*tok).Type() != TokenType::EOL);
+    } while (tok->Type() != TokenType::EOL);
+
+    // If null input, continue
+    if (tokqueue.front()->Type() == TokenType::EOL) {
+      tokqueue.pop();
+      continue;
+    }
 
     tokqueue.push(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr)));
 
     // Parse the token and produce Abstract Syntax Tree (AST)
-    Parser parser = Parser(tokqueue);
-    Program program = parser.ProduceAST();
+    Program program = parser.ProduceAST(tokqueue);
 
     // Evaluate the AST and produce the result in string
-    Evaluater evaluater = Evaluater(program);
-    std::cout << evaluater.EvaluateProgram() << std::endl;
+    std::cout << evaluater.EvaluateProgram(program) << std::endl;
 
     // Reset the token queue
     tokqueue = std::queue<TokenPtr>();
-  } while (input != "exit");
+  } while (true);
 }

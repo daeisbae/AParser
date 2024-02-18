@@ -171,7 +171,7 @@ StatementPtr Parser::parseIdentifierDeclarationExpression() {
   eat();
   parseWhitespaceExpression();
 
-  ExpressionPtr value = parsePrimaryExpression();
+  ExpressionPtr value = parseExpression();
   parseWhitespaceExpression();
 
   return std::make_shared<VariableDeclarationStatement>(varExpr->Name, value);

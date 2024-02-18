@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 #include "ast.hpp"
 
@@ -39,19 +40,33 @@ class NumberValue : public RuntimeValue {
 
 typedef std::shared_ptr<RuntimeValue> RuntimeValuePtr;
 
+class Environment {
+ private:
+  std::unordered_map<std::string, RuntimeValuePtr> variablemap;
+
+ public:
+  Environment();
+  void DefineVariable(std::string name, RuntimeValuePtr runtimeValue);
+  void AssignVariable(std::string name, RuntimeValuePtr runtimeValue);
+  RuntimeValuePtr GetRuntimeValue(std::string name);
+};
+
 class Evaluater {
  private:
   Program program;
+  Environment env;
 
   RuntimeValuePtr evaluateBinaryExpression(BinaryExpression binExpr);
   NumberValue evaluateNumericBinaryExpression(NumberValue lfs, NumberValue rhs,
                                               std::string op);
+  RuntimeValuePtr evaluateDefiningIdentifierExpression(
+      VariableDeclarationStatement varDeclStmt);
   RuntimeValuePtr evaluate(StatementPtr currStmt);
 
  public:
-  Evaluater(Program astProgram);
+  Evaluater();
 
-  std::string EvaluateProgram();
+  std::string EvaluateProgram(Program astProgram);
 };
 
 class UnexpectedStatementException : public std::exception {
@@ -60,6 +75,26 @@ class UnexpectedStatementException : public std::exception {
 
  public:
   UnexpectedStatementException(std::string err) : errinfo(err){};
+
+  const char* what() const noexcept override { return errinfo.c_str(); }
+};
+
+class VariableAlreadyDeclaredException : public std::exception {
+ private:
+  std::string errinfo;
+
+ public:
+  VariableAlreadyDeclaredException(std::string err) : errinfo(err){};
+
+  const char* what() const noexcept override { return errinfo.c_str(); }
+};
+
+class VariableDoesNotExistException : public std::exception {
+ private:
+  std::string errinfo;
+
+ public:
+  VariableDoesNotExistException(std::string err) : errinfo(err){};
 
   const char* what() const noexcept override { return errinfo.c_str(); }
 };

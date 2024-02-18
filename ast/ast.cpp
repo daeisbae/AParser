@@ -7,6 +7,9 @@ std::string NodeEnumToString(NodeType nodetype) {
     case NodeType::Program:
       typestr = "ProgramStatement";
       break;
+    case NodeType::VariableDeclarationStmt:
+      typestr = "VariableDeclarationStatement";
+      break;
     case NodeType::IdentifierExpr:
       typestr = "IdentifierExpression";
       break;
@@ -42,6 +45,17 @@ void Program::PrintOstream(std::ostream& out) const {
   }
 
   out << "}";
+}
+
+void VariableDeclarationStatement::PrintOstream(std::ostream& out) const {
+  out << NodeEnumToString(Type()) << " (";
+
+  out << "Identifier : " << Name;
+  out << ", ";
+  out << "Value : ";
+  Value->PrintOstream(out);
+
+  out << " )";
 }
 
 void BinaryExpression::PrintOstream(std::ostream& out) const {

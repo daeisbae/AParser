@@ -8,6 +8,7 @@
 
 class Statement;
 class Program;
+class VariableAssignExpression;
 class VariableDeclarationStatement;
 class Expression;
 class BinaryExpression;
@@ -30,6 +31,7 @@ enum class NodeType {
   BinaryExpr,
   WhitespaceExpr,
   NullExpr,
+  VariableAssignExpr,
 };
 
 std::string NodeEnumToString(NodeType nodetype);
@@ -175,6 +177,26 @@ class VariableDeclarationStatement : public Statement {
   friend std::ostream& operator<<(
       std::ostream& out, const VariableDeclarationStatement& varDeclStmt) {
     varDeclStmt.PrintOstream(out);
+
+    return out;
+  }
+};
+
+class VariableAssignExpression : public Expression {
+ public:
+  VariableAssignExpression(std::string identifier, StatementPtr value)
+      : Name(identifier), Value(value){};
+
+  std::string Name;
+  StatementPtr Value;
+
+  NodeType Type() const override { return NodeType::VariableAssignExpr; }
+
+  void PrintOstream(std::ostream& out) const;
+
+  friend std::ostream& operator<<(
+      std::ostream& out, const VariableAssignExpression& varAssignStmt) {
+    varAssignStmt.PrintOstream(out);
 
     return out;
   }

@@ -10,6 +10,9 @@ std::string NodeEnumToString(NodeType nodetype) {
     case NodeType::VariableDeclarationStmt:
       typestr = "VariableDeclarationStatement";
       break;
+    case NodeType::VariableAssignExpr:
+      typestr = "VariableAssignStatement";
+      break;
     case NodeType::IdentifierExpr:
       typestr = "IdentifierExpression";
       break;
@@ -48,6 +51,17 @@ void Program::PrintOstream(std::ostream& out) const {
 }
 
 void VariableDeclarationStatement::PrintOstream(std::ostream& out) const {
+  out << NodeEnumToString(Type()) << " (";
+
+  out << "Identifier : " << Name;
+  out << ", ";
+  out << "Value : ";
+  Value->PrintOstream(out);
+
+  out << " )";
+}
+
+void VariableAssignExpression::PrintOstream(std::ostream& out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Identifier : " << Name;

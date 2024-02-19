@@ -61,6 +61,8 @@ class Evaluater {
                                               std::string op);
   RuntimeValuePtr evaluateDefiningIdentifierExpression(
       VariableDeclarationStatement varDeclStmt);
+  RuntimeValuePtr evaluateAssignIdentifierExpression(
+      VariableAssignExpression varAssignExpr);
   RuntimeValuePtr evaluate(StatementPtr currStmt);
 
  public:

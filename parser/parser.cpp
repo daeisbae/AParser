@@ -62,7 +62,9 @@ StatementPtr Parser::parseStatement() {
   }
 }
 
-ExpressionPtr Parser::parseExpression() { return parseAdditionExpression(); }
+ExpressionPtr Parser::parseExpression() {
+  return parseIdentifierAssignmentExpression();
+}
 
 ExpressionPtr Parser::parsePrimaryExpression() {
   std::stringstream ssInvalidTokMsg;
@@ -114,7 +116,7 @@ ExpressionPtr Parser::parseAdditionExpression() {
   ExpressionPtr left = parseMultiplicationExpression();
   parseWhitespaceExpression();
 
-  while (peek()->Type() != TokenType::EOL &&
+  while (peek()->Type() == TokenType::OPERATOR &&
          (peek()->OpPtr()->Type() == OperatorType::PLUS ||
           peek()->OpPtr()->Type() == OperatorType::MINUS)) {
     const std::string opVal = eat()->Text();
@@ -132,7 +134,7 @@ ExpressionPtr Parser::parseMultiplicationExpression() {
   ExpressionPtr left = parsePrimaryExpression();
   parseWhitespaceExpression();
 
-  while (peek()->Type() != TokenType::EOL &&
+  while (peek()->Type() == TokenType::OPERATOR &&
          (peek()->OpPtr()->Type() == OperatorType::STAR ||
           peek()->OpPtr()->Type() == OperatorType::SLASH)) {
     const std::string opVal = eat()->Text();
@@ -175,4 +177,28 @@ StatementPtr Parser::parseIdentifierDeclarationExpression() {
   parseWhitespaceExpression();
 
   return std::make_shared<VariableDeclarationStatement>(varExpr->Name, value);
+}
+
+ExpressionPtr Parser::parseIdentifierAssignmentExpression() {
+  // Can be an identifier
+  ExpressionPtr left = parseAdditionExpression();
+
+  parseWhitespaceExpression();
+
+  if (peek()->Type() == TokenType::OPERATOR &&
+      peek()->OpPtr()->Type() == OperatorType::ASSIGN) {
+    eat();
+
+    parseWhitespaceExpression();
+
+    std::shared_ptr<IdentifierExpression> varExpr =
+        std::dynamic_pointer_cast<IdentifierExpression>(left);
+
+    ExpressionPtr value = parseIdentifierAssignmentExpression();
+    parseWhitespaceExpression();
+
+    return std::make_shared<VariableAssignExpression>(varExpr->Name, value);
+  }
+
+  return left;
 }

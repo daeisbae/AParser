@@ -153,6 +153,18 @@ RuntimeValuePtr Evaluater::evaluate(StatementPtr currStmt) {
       matchValue = evaluateDefiningIdentifierExpression(*varDeclStmt);
       break;
     }
+    case NodeType::VariableAssignExpr: {
+      std::shared_ptr<VariableAssignExpression> varDeclExpr =
+          std::dynamic_pointer_cast<VariableAssignExpression>(currStmt);
+      if (!varDeclExpr) {
+        ssInvalidStmtMsg << "Failed to cast StatementPtr to "
+                            "VariableAssignExpressionPtr : "
+                         << currStmt;
+        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+      }
+      matchValue = evaluateAssignIdentifierExpression(*varDeclExpr);
+      break;
+    }
     default:
       ssInvalidStmtMsg
           << "Unimplemented Statement(Expression) in Evaluate Expression : "
@@ -167,6 +179,14 @@ RuntimeValuePtr Evaluater::evaluateDefiningIdentifierExpression(
     VariableDeclarationStatement varDeclStmt) {
   RuntimeValuePtr evalAssignedVal = evaluate(varDeclStmt.Value);
   env.DefineVariable(varDeclStmt.Name, evalAssignedVal);
+
+  return evalAssignedVal;
+}
+
+RuntimeValuePtr Evaluater::evaluateAssignIdentifierExpression(
+    VariableAssignExpression varAssignExpr) {
+  RuntimeValuePtr evalAssignedVal = evaluate(varAssignExpr.Value);
+  env.AssignVariable(varAssignExpr.Name, evalAssignedVal);
 
   return evalAssignedVal;
 }

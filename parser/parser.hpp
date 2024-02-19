@@ -41,7 +41,7 @@ class Parser {
   StatementPtr parseIdentifierDeclarationExpression();
 
   // Assignment Identifier
-  // ExpressionPtr parseIdentifierAssignmentExpression();
+  ExpressionPtr parseIdentifierAssignmentExpression();
 
  public:
   Parser();

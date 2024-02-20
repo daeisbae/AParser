@@ -51,11 +51,13 @@ class Program : public Statement {
   Program() { Body = std::queue<StatementPtr>(); }
   Program(std::queue<StatementPtr> stmtVec) : Body(stmtVec){};
 
+  virtual ~Program() = default;
+
   std::queue<StatementPtr> Body;
 
   NodeType Type() const override { return NodeType::Program; }
 
-  void PrintOstream(std::ostream& out) const;
+  void PrintOstream(std::ostream& out) const override;
 
   friend std::ostream& operator<<(std::ostream& out, const Program& program) {
     program.PrintOstream(out);
@@ -71,13 +73,15 @@ class BinaryExpression : public Expression {
   BinaryExpression(ExpressionPtr left, std::string op, ExpressionPtr right)
       : Left(left), Right(right), OP(op){};
 
+  virtual ~BinaryExpression() = default;
+
   ExpressionPtr Left;
   ExpressionPtr Right;
   std::string OP;
 
   NodeType Type() const override { return NodeType::BinaryExpr; }
 
-  void PrintOstream(std::ostream& out) const;
+  void PrintOstream(std::ostream& out) const override;
 
   friend std::ostream& operator<<(std::ostream& out,
                                   const BinaryExpression& binaryExpr) {
@@ -91,11 +95,13 @@ class IdentifierExpression : public Expression {
  public:
   IdentifierExpression(std::string name) : Name(name){};
 
+  virtual ~IdentifierExpression() = default;
+
   std::string Name;
 
   NodeType Type() const override { return NodeType::IdentifierExpr; }
 
-  void PrintOstream(std::ostream& out) const;
+  void PrintOstream(std::ostream& out) const override;
 
   friend std::ostream& operator<<(std::ostream& out,
                                   const IdentifierExpression& identifierExpr) {
@@ -109,11 +115,13 @@ class IntegerExpression : public Expression {
  public:
   IntegerExpression(int tokValue) : Value(tokValue){};
 
+  virtual ~IntegerExpression() = default;
+
   int Value;
 
   NodeType Type() const override { return NodeType::IntegerExpr; }
 
-  void PrintOstream(std::ostream& out) const;
+  void PrintOstream(std::ostream& out) const override;
 
   friend std::ostream& operator<<(std::ostream& out,
                                   const IntegerExpression& integerExpr) {
@@ -127,11 +135,13 @@ class WhitespaceExpression : public Expression {
  public:
   WhitespaceExpression(std::string tokValue) : Value(tokValue){};
 
+  virtual ~WhitespaceExpression() = default;
+
   std::string Value;
 
   NodeType Type() const override { return NodeType::WhitespaceExpr; }
 
-  void PrintOstream(std::ostream& out) const;
+  void PrintOstream(std::ostream& out) const override;
 
   friend std::ostream& operator<<(std::ostream& out,
                                   const WhitespaceExpression& whitespaceExpr) {
@@ -145,9 +155,11 @@ class NullExpression : public Expression {
  public:
   NullExpression(){};
 
+  virtual ~NullExpression() = default;
+
   NodeType Type() const override { return NodeType::NullExpr; }
 
-  void PrintOstream(std::ostream& out) const;
+  void PrintOstream(std::ostream& out) const override;
 
   friend std::ostream& operator<<(std::ostream& out,
                                   const NullExpression& nullExpr) {
@@ -167,12 +179,14 @@ class VariableDeclarationStatement : public Statement {
   VariableDeclarationStatement(std::string identifier, ExpressionPtr value)
       : Name(identifier), Value(value){};
 
+  virtual ~VariableDeclarationStatement() = default;
+
   std::string Name;
   ExpressionPtr Value;
 
   NodeType Type() const override { return NodeType::VariableDeclarationStmt; }
 
-  void PrintOstream(std::ostream& out) const;
+  void PrintOstream(std::ostream& out) const override;
 
   friend std::ostream& operator<<(
       std::ostream& out, const VariableDeclarationStatement& varDeclStmt) {
@@ -187,12 +201,14 @@ class VariableAssignExpression : public Expression {
   VariableAssignExpression(std::string identifier, StatementPtr value)
       : Name(identifier), Value(value){};
 
+  virtual ~VariableAssignExpression() = default;
+
   std::string Name;
   StatementPtr Value;
 
   NodeType Type() const override { return NodeType::VariableAssignExpr; }
 
-  void PrintOstream(std::ostream& out) const;
+  void PrintOstream(std::ostream& out) const override;
 
   friend std::ostream& operator<<(
       std::ostream& out, const VariableAssignExpression& varAssignStmt) {

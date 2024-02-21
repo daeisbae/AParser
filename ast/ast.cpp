@@ -28,6 +28,9 @@ std::string NodeEnumToString(NodeType nodetype) {
     case NodeType::NullExpr:
       typestr = "NullExpression";
       break;
+    case NodeType::BooleanExpr:
+      typestr = "BooleanExpression";
+      break;
     default:
       typestr = "InvalidExpression";
       break;
@@ -35,7 +38,7 @@ std::string NodeEnumToString(NodeType nodetype) {
   return typestr;
 }
 
-void Program::PrintOstream(std::ostream& out) const {
+void Program::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " {\n";
 
   std::queue<StatementPtr> copiedProgram = Body;
@@ -50,7 +53,7 @@ void Program::PrintOstream(std::ostream& out) const {
   out << "}";
 }
 
-void VariableDeclarationStatement::PrintOstream(std::ostream& out) const {
+void VariableDeclarationStatement::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Identifier : " << Name;
@@ -61,7 +64,7 @@ void VariableDeclarationStatement::PrintOstream(std::ostream& out) const {
   out << " )";
 }
 
-void VariableAssignExpression::PrintOstream(std::ostream& out) const {
+void VariableAssignExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Identifier : " << Name;
@@ -72,7 +75,7 @@ void VariableAssignExpression::PrintOstream(std::ostream& out) const {
   out << " )";
 }
 
-void BinaryExpression::PrintOstream(std::ostream& out) const {
+void BinaryExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Left Value : ";
@@ -86,7 +89,7 @@ void BinaryExpression::PrintOstream(std::ostream& out) const {
   out << ")";
 }
 
-void IdentifierExpression::PrintOstream(std::ostream& out) const {
+void IdentifierExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Name : " << Name;
@@ -94,7 +97,7 @@ void IdentifierExpression::PrintOstream(std::ostream& out) const {
   out << ")";
 }
 
-void IntegerExpression::PrintOstream(std::ostream& out) const {
+void IntegerExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Value : " << Value;
@@ -102,7 +105,7 @@ void IntegerExpression::PrintOstream(std::ostream& out) const {
   out << ")";
 }
 
-void WhitespaceExpression::PrintOstream(std::ostream& out) const {
+void WhitespaceExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Value : '" << Value;
@@ -110,6 +113,11 @@ void WhitespaceExpression::PrintOstream(std::ostream& out) const {
   out << "' )";
 }
 
-void NullExpression::PrintOstream(std::ostream& out) const {
+void NullExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " ( Value : 'NULL' )";
+}
+
+void BooleanExpression::PrintOstream(std::ostream &out) const {
+  out << NodeEnumToString(Type()) << " ( Value : '";
+  out << Value << "' )";
 }

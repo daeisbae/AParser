@@ -30,6 +30,7 @@ enum class NodeType {
   IntegerExpr,
   BinaryExpr,
   WhitespaceExpr,
+  BooleanExpr,
   NullExpr,
   VariableAssignExpr,
 };
@@ -43,7 +44,7 @@ class Statement {
   // Making virtual operator<< is not allowed, Hence this virtual function will
   // be acting as a second layer.
   // https://stackoverflow.com/questions/4571611/making-operator-virtual
-  virtual void PrintOstream(std::ostream& out) const = 0;
+  virtual void PrintOstream(std::ostream &out) const = 0;
 };
 
 class Program : public Statement {
@@ -57,9 +58,9 @@ class Program : public Statement {
 
   NodeType Type() const override { return NodeType::Program; }
 
-  void PrintOstream(std::ostream& out) const override;
+  void PrintOstream(std::ostream &out) const override;
 
-  friend std::ostream& operator<<(std::ostream& out, const Program& program) {
+  friend std::ostream &operator<<(std::ostream &out, const Program &program) {
     program.PrintOstream(out);
 
     return out;
@@ -81,10 +82,10 @@ class BinaryExpression : public Expression {
 
   NodeType Type() const override { return NodeType::BinaryExpr; }
 
-  void PrintOstream(std::ostream& out) const override;
+  void PrintOstream(std::ostream &out) const override;
 
-  friend std::ostream& operator<<(std::ostream& out,
-                                  const BinaryExpression& binaryExpr) {
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const BinaryExpression &binaryExpr) {
     binaryExpr.PrintOstream(out);
 
     return out;
@@ -101,10 +102,10 @@ class IdentifierExpression : public Expression {
 
   NodeType Type() const override { return NodeType::IdentifierExpr; }
 
-  void PrintOstream(std::ostream& out) const override;
+  void PrintOstream(std::ostream &out) const override;
 
-  friend std::ostream& operator<<(std::ostream& out,
-                                  const IdentifierExpression& identifierExpr) {
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const IdentifierExpression &identifierExpr) {
     identifierExpr.PrintOstream(out);
 
     return out;
@@ -121,10 +122,10 @@ class IntegerExpression : public Expression {
 
   NodeType Type() const override { return NodeType::IntegerExpr; }
 
-  void PrintOstream(std::ostream& out) const override;
+  void PrintOstream(std::ostream &out) const override;
 
-  friend std::ostream& operator<<(std::ostream& out,
-                                  const IntegerExpression& integerExpr) {
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const IntegerExpression &integerExpr) {
     integerExpr.PrintOstream(out);
 
     return out;
@@ -141,10 +142,10 @@ class WhitespaceExpression : public Expression {
 
   NodeType Type() const override { return NodeType::WhitespaceExpr; }
 
-  void PrintOstream(std::ostream& out) const override;
+  void PrintOstream(std::ostream &out) const override;
 
-  friend std::ostream& operator<<(std::ostream& out,
-                                  const WhitespaceExpression& whitespaceExpr) {
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const WhitespaceExpression &whitespaceExpr) {
     whitespaceExpr.PrintOstream(out);
 
     return out;
@@ -159,11 +160,31 @@ class NullExpression : public Expression {
 
   NodeType Type() const override { return NodeType::NullExpr; }
 
-  void PrintOstream(std::ostream& out) const override;
+  void PrintOstream(std::ostream &out) const override;
 
-  friend std::ostream& operator<<(std::ostream& out,
-                                  const NullExpression& nullExpr) {
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const NullExpression &nullExpr) {
     nullExpr.PrintOstream(out);
+
+    return out;
+  }
+};
+
+class BooleanExpression : public Expression {
+ public:
+  BooleanExpression(std::string value) : Value(value){};
+
+  std::string Value;
+
+  virtual ~BooleanExpression() = default;
+
+  NodeType Type() const override { return NodeType::BooleanExpr; }
+
+  void PrintOstream(std::ostream &out) const override;
+
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const BooleanExpression &boolExpr) {
+    boolExpr.PrintOstream(out);
 
     return out;
   }
@@ -186,10 +207,10 @@ class VariableDeclarationStatement : public Statement {
 
   NodeType Type() const override { return NodeType::VariableDeclarationStmt; }
 
-  void PrintOstream(std::ostream& out) const override;
+  void PrintOstream(std::ostream &out) const override;
 
-  friend std::ostream& operator<<(
-      std::ostream& out, const VariableDeclarationStatement& varDeclStmt) {
+  friend std::ostream &operator<<(
+      std::ostream &out, const VariableDeclarationStatement &varDeclStmt) {
     varDeclStmt.PrintOstream(out);
 
     return out;
@@ -208,10 +229,10 @@ class VariableAssignExpression : public Expression {
 
   NodeType Type() const override { return NodeType::VariableAssignExpr; }
 
-  void PrintOstream(std::ostream& out) const override;
+  void PrintOstream(std::ostream &out) const override;
 
-  friend std::ostream& operator<<(
-      std::ostream& out, const VariableAssignExpression& varAssignStmt) {
+  friend std::ostream &operator<<(
+      std::ostream &out, const VariableAssignExpression &varAssignStmt) {
     varAssignStmt.PrintOstream(out);
 
     return out;

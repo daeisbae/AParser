@@ -38,7 +38,7 @@ TokenPtr Parser::expectedTokenType(TokenType expectedTokType) {
   throw UnexpectedTokenParsedException(ssInvalidTokMsg.str());
 }
 
-Program Parser::ProduceAST(std::queue<TokenPtr>& tokenQueue) {
+Program Parser::ProduceAST(std::queue<TokenPtr> &tokenQueue) {
   tokqueue = tokenQueue;
   Program program = Program();
 
@@ -86,6 +86,10 @@ ExpressionPtr Parser::parsePrimaryExpression() {
     case TokenType::NULLABLE:
       eat();
       returnedExpr = ExpressionPtr(new NullExpression());
+      break;
+    case TokenType::TRUE:
+    case TokenType::FALSE:
+      returnedExpr = ExpressionPtr(new BooleanExpression(eat()->Text()));
       break;
     case TokenType::OPERATOR:
       switch (peek()->OpPtr()->Type()) {

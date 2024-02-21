@@ -7,16 +7,13 @@
 
 #include "ast.hpp"
 
-enum class ValueType {
-  NULLABLE,
-  NUMBER,
-};
+enum class ValueType { NULLABLE, NUMBER, BOOLEAN };
 
 class RuntimeValue {
  public:
   virtual ValueType Type() const = 0;
   virtual std::string Value() const = 0;
-  void PrintOstream(std::ostream& out) const { out << Value(); }
+  void PrintOstream(std::ostream &out) const { out << Value(); }
 };
 
 class NullValue : public RuntimeValue {
@@ -36,6 +33,17 @@ class NumberValue : public RuntimeValue {
 
   ValueType Type() const { return ValueType::NUMBER; }
   std::string Value() const { return std::to_string(value); }
+};
+
+class BooleanValue : public RuntimeValue {
+ private:
+  std::string value;
+
+ public:
+  BooleanValue(std::string boolValue) : value(boolValue){};
+
+  ValueType Type() const { return ValueType::BOOLEAN; }
+  std::string Value() const { return value; }
 };
 
 typedef std::shared_ptr<RuntimeValue> RuntimeValuePtr;
@@ -78,7 +86,7 @@ class UnexpectedStatementException : public std::exception {
  public:
   UnexpectedStatementException(std::string err) : errinfo(err){};
 
-  const char* what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return errinfo.c_str(); }
 };
 
 class VariableAlreadyDeclaredException : public std::exception {
@@ -88,7 +96,7 @@ class VariableAlreadyDeclaredException : public std::exception {
  public:
   VariableAlreadyDeclaredException(std::string err) : errinfo(err){};
 
-  const char* what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return errinfo.c_str(); }
 };
 
 class VariableDoesNotExistException : public std::exception {
@@ -98,7 +106,7 @@ class VariableDoesNotExistException : public std::exception {
  public:
   VariableDoesNotExistException(std::string err) : errinfo(err){};
 
-  const char* what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return errinfo.c_str(); }
 };
 
 #endif

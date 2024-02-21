@@ -1,5 +1,6 @@
 #include "runtime.hpp"
 
+#include <memory>
 #include <sstream>
 #include <unordered_map>
 
@@ -70,6 +71,32 @@ RuntimeValuePtr Evaluater::evaluateBinaryExpression(
         std::dynamic_pointer_cast<NumberValue>(lhs);
     std::shared_ptr<NumberValue> rhsNumber =
         std::dynamic_pointer_cast<NumberValue>(rhs);
+    NumberValue result =
+        evaluateNumericBinaryExpression(*lhsNumber, *rhsNumber, binaryExpr.OP);
+    return std::make_unique<NumberValue>(result);
+  }
+  if ((lhs->Type() == ValueType::BOOLEAN || lhs->Type() == ValueType::NUMBER) &&
+      (rhs->Type() == ValueType::BOOLEAN || rhs->Type() == ValueType::NUMBER)) {
+    std::shared_ptr<NumberValue> lhsNumber;
+    std::shared_ptr<NumberValue> rhsNumber;
+    if (lhs->Type() == ValueType::BOOLEAN) {
+      if (lhs->Value() == "true")
+        lhsNumber = std::make_shared<NumberValue>(1);
+      else
+        lhsNumber = std::make_shared<NumberValue>(0);
+    } else {
+      std::dynamic_pointer_cast<NumberValue>(lhs);
+    }
+
+    if (rhs->Type() == ValueType::BOOLEAN) {
+      if (rhs->Value() == "true")
+        rhsNumber = std::make_shared<NumberValue>(1);
+      else
+        rhsNumber = std::make_shared<NumberValue>(0);
+    } else {
+      rhsNumber = std::dynamic_pointer_cast<NumberValue>(rhs);
+    }
+
     NumberValue result =
         evaluateNumericBinaryExpression(*lhsNumber, *rhsNumber, binaryExpr.OP);
     return std::make_unique<NumberValue>(result);
@@ -163,6 +190,18 @@ RuntimeValuePtr Evaluater::evaluate(StatementPtr currStmt) {
         throw UnexpectedStatementException(ssInvalidStmtMsg.str());
       }
       matchValue = evaluateAssignIdentifierExpression(*varDeclExpr);
+      break;
+    }
+    case NodeType::BooleanExpr: {
+      std::shared_ptr<BooleanExpression> boolExpr =
+          std::dynamic_pointer_cast<BooleanExpression>(currStmt);
+      if (!boolExpr) {
+        ssInvalidStmtMsg
+            << "Failed to cast StatementPtr to BooleanExpression : "
+            << currStmt;
+        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+      }
+      matchValue = std::make_unique<BooleanValue>(boolExpr->Value);
       break;
     }
     default:

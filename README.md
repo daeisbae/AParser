@@ -17,6 +17,9 @@ chmod +x AParser
 ./AParser
 ```
 
+## Learning Grammar Syntax of AParser
+Refer [AParser Language Syntax Documentation](https://github.com/daeisbae/AParser/blob/main/docs/README.md)
+
 ## Project Structure
 ```
 AParser

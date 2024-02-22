@@ -38,7 +38,7 @@ TokenPtr Parser::expectedTokenType(TokenType expectedTokType) {
   throw UnexpectedTokenParsedException(ssInvalidTokMsg.str());
 }
 
-Program Parser::ProduceAST(std::queue<TokenPtr> &tokenQueue) {
+Program Parser::ProduceAST(std::queue<TokenPtr>& tokenQueue) {
   tokqueue = tokenQueue;
   Program program = Program();
 
@@ -101,6 +101,23 @@ ExpressionPtr Parser::parsePrimaryExpression() {
           expectedTokenType(OperatorType::R_PARENTHESIS);
           eat();
           break;
+        case OperatorType::PLUS:
+        case OperatorType::MINUS: {
+          int sign = 1;
+          while (peek()->Type() == TokenType::OPERATOR &&
+                 (peek()->OpPtr()->Type() == OperatorType::PLUS ||
+                  peek()->OpPtr()->Type() == OperatorType::MINUS)) {
+            if (peek()->OpPtr()->Type() == OperatorType::MINUS) {
+              sign *= -1;
+            }
+            eat();
+            parseWhitespaceExpression();
+          }
+          expectedTokenType(TokenType::INTEGER);
+          returnedExpr = ExpressionPtr(
+              new IntegerExpression(sign * std::stoi(eat()->Text())));
+          break;
+        }
         default:
           ssInvalidTokMsg << "Unexpected Operator: \'" << *(peek()->OpPtr())
                           << "\' is not allowed";

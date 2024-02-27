@@ -291,3 +291,126 @@ TEST(EvaluaterTest, VariableAssignment) {
     EXPECT_EQ(test3Result, "521");
   }
 }
+
+TEST(EvaluaterTest, ValueComparison) {
+  {
+    std::queue<StatementPtr> stmtqueue;
+    // 1234 == 1234
+    stmtqueue.push(std::make_shared<ComparisonExpression>(
+        std::make_shared<IntegerExpression>(1234),
+        "==", std::make_shared<IntegerExpression>(1234)));
+
+    Evaluater test1 = Evaluater();
+    std::string test1Result = test1.EvaluateProgram(stmtqueue);
+
+    // 1
+    EXPECT_EQ(test1Result, "true");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue2;
+    // 10 != 11
+    stmtqueue2.push(std::make_shared<ComparisonExpression>(
+        std::make_shared<IntegerExpression>(10),
+        "!=", std::make_shared<IntegerExpression>(11)));
+
+    Evaluater test2 = Evaluater();
+    std::string test2Result = test2.EvaluateProgram(stmtqueue2);
+
+    // 2
+    EXPECT_EQ(test2Result, "true");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue3;
+    // null == null
+    stmtqueue3.push(std::make_shared<ComparisonExpression>(
+        std::make_shared<NullExpression>(),
+        "==", std::make_shared<NullExpression>()));
+
+    Evaluater test3 = Evaluater();
+    std::string test3Result = test3.EvaluateProgram(stmtqueue3);
+
+    // 3
+    EXPECT_EQ(test3Result, "true");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue4;
+    // set hello = 1
+    // hello == 1
+    stmtqueue4.push(std::make_shared<VariableDeclarationStatement>(
+        "hello", std::make_shared<IntegerExpression>(1)));
+    stmtqueue4.push(std::make_shared<ComparisonExpression>(
+        std::make_shared<IdentifierExpression>("hello"),
+        "==", std::make_shared<IntegerExpression>(1)));
+
+    Evaluater test4 = Evaluater();
+    std::string test4Result = test4.EvaluateProgram(stmtqueue4);
+
+    // 4
+    EXPECT_EQ(test4Result, "true");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue5;
+    // true == 1
+    stmtqueue5.push(std::make_shared<ComparisonExpression>(
+        std::make_shared<BooleanExpression>("true"),
+        "==", std::make_shared<IntegerExpression>(1)));
+
+    Evaluater test5 = Evaluater();
+    std::string test5Result = test5.EvaluateProgram(stmtqueue5);
+
+    // 5
+    EXPECT_EQ(test5Result, "true");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue6;
+    // false == 0
+    stmtqueue6.push(std::make_shared<ComparisonExpression>(
+        std::make_shared<BooleanExpression>("false"),
+        "==", std::make_shared<IntegerExpression>(0)));
+
+    Evaluater test6 = Evaluater();
+    std::string test6Result = test6.EvaluateProgram(stmtqueue6);
+
+    // 6
+    EXPECT_EQ(test6Result, "true");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue7;
+    // false == -1
+    stmtqueue7.push(std::make_shared<ComparisonExpression>(
+        std::make_shared<BooleanExpression>("false"),
+        "==", std::make_shared<IntegerExpression>(-1)));
+
+    Evaluater test7 = Evaluater();
+    std::string test7Result = test7.EvaluateProgram(stmtqueue7);
+
+    // 7
+    EXPECT_EQ(test7Result, "true");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue8;
+    // -10 == false
+    stmtqueue8.push(std::make_shared<ComparisonExpression>(
+        std::make_shared<IntegerExpression>(-10),
+        "==", std::make_shared<BooleanExpression>("false")));
+
+    Evaluater test8 = Evaluater();
+    std::string test8Result = test8.EvaluateProgram(stmtqueue8);
+
+    // 8
+    EXPECT_EQ(test8Result, "true");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue9;
+    // 123 != false
+    stmtqueue9.push(std::make_shared<ComparisonExpression>(
+        std::make_shared<IntegerExpression>(123),
+        "!=", std::make_shared<BooleanExpression>("false")));
+
+    Evaluater test9 = Evaluater();
+    std::string test9Result = test9.EvaluateProgram(stmtqueue9);
+
+    // 8
+    EXPECT_EQ(test9Result, "true");
+  }
+}

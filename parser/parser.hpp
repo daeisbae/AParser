@@ -43,11 +43,14 @@ class Parser {
   // Assignment Identifier
   ExpressionPtr parseIdentifierAssignmentExpression();
 
+  // Comparison (== , !=)
+  ExpressionPtr parseComparisonExpression();
+
  public:
   Parser();
   ~Parser();
 
-  Program ProduceAST(std::queue<TokenPtr>& tokenQueue);
+  Program ProduceAST(std::queue<TokenPtr> &tokenQueue);
 };
 
 class UnexpectedTokenParsedException : public std::exception {
@@ -57,7 +60,7 @@ class UnexpectedTokenParsedException : public std::exception {
  public:
   UnexpectedTokenParsedException(std::string err) : errinfo(err){};
 
-  const char* what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return errinfo.c_str(); }
 };
 
 #endif

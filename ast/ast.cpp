@@ -13,6 +13,9 @@ std::string NodeEnumToString(NodeType nodetype) {
     case NodeType::VariableAssignExpr:
       typestr = "VariableAssignStatement";
       break;
+    case NodeType::ComparisonExpr:
+      typestr = "ComparisonExpression";
+      break;
     case NodeType::IdentifierExpr:
       typestr = "IdentifierExpression";
       break;
@@ -73,6 +76,20 @@ void VariableAssignExpression::PrintOstream(std::ostream &out) const {
   Value->PrintOstream(out);
 
   out << " )";
+}
+
+void ComparisonExpression::PrintOstream(std::ostream &out) const {
+  out << NodeEnumToString(Type()) << " (";
+
+  out << "Left Value : ";
+  Left->PrintOstream(out);
+  out << ", ";
+  out << "Op Value : " << OP << ", ";
+  out << "Right Value : ";
+  Right->PrintOstream(out);
+  out << ", ";
+
+  out << ")";
 }
 
 void BinaryExpression::PrintOstream(std::ostream &out) const {

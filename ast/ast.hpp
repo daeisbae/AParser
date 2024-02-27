@@ -10,6 +10,7 @@ class Statement;
 class Program;
 class VariableAssignExpression;
 class VariableDeclarationStatement;
+class ComparisonExpression;
 class Expression;
 class BinaryExpression;
 class IdentifierExpression;
@@ -33,6 +34,7 @@ enum class NodeType {
   BooleanExpr,
   NullExpr,
   VariableAssignExpr,
+  ComparisonExpr,
 };
 
 std::string NodeEnumToString(NodeType nodetype);
@@ -234,6 +236,29 @@ class VariableAssignExpression : public Expression {
   friend std::ostream &operator<<(
       std::ostream &out, const VariableAssignExpression &varAssignStmt) {
     varAssignStmt.PrintOstream(out);
+
+    return out;
+  }
+};
+
+class ComparisonExpression : public Expression {
+ public:
+  ComparisonExpression(ExpressionPtr lhs, std::string op, ExpressionPtr rhs)
+      : Left(lhs), OP(op), Right(rhs){};
+
+  ExpressionPtr Left;
+  std::string OP;
+  ExpressionPtr Right;
+
+  virtual ~ComparisonExpression() = default;
+
+  NodeType Type() const override { return NodeType::ComparisonExpr; }
+
+  void PrintOstream(std::ostream &out) const override;
+
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const ComparisonExpression &comparisonExpr) {
+    comparisonExpr.PrintOstream(out);
 
     return out;
   }

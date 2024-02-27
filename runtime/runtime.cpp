@@ -192,6 +192,18 @@ RuntimeValuePtr Evaluater::evaluate(StatementPtr currStmt) {
       matchValue = evaluateAssignIdentifierExpression(*varDeclExpr);
       break;
     }
+    case NodeType::ComparisonExpr: {
+      std::shared_ptr<ComparisonExpression> compareExpr =
+          std::dynamic_pointer_cast<ComparisonExpression>(currStmt);
+      if (!compareExpr) {
+        ssInvalidStmtMsg << "Failed to cast StatementPtr to "
+                            "ComparisonExpression : "
+                         << currStmt;
+        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+      }
+      matchValue = evaluateComparisonExpression(*compareExpr);
+      break;
+    }
     case NodeType::BooleanExpr: {
       std::shared_ptr<BooleanExpression> boolExpr =
           std::dynamic_pointer_cast<BooleanExpression>(currStmt);
@@ -228,4 +240,42 @@ RuntimeValuePtr Evaluater::evaluateAssignIdentifierExpression(
   env.AssignVariable(varAssignExpr.Name, evalAssignedVal);
 
   return evalAssignedVal;
+}
+
+RuntimeValuePtr Evaluater::evaluateComparisonExpression(
+    ComparisonExpression compareExpr) {
+  RuntimeValuePtr lhs = evaluate(compareExpr.Left);
+  RuntimeValuePtr rhs = evaluate(compareExpr.Right);
+
+  bool isEqualOp = compareExpr.OP == "==" ? true : false;
+
+  // Compare value of equal type
+  if (lhs->Type() == rhs->Type()) {
+    bool isEqualValue = lhs->Value() == rhs->Value();
+    std::string evalComparisonValue = isEqualValue ? "true" : "false";
+    if (!isEqualOp) {
+      evalComparisonValue = isEqualValue ? "false" : "true";
+    }
+
+    return std::make_shared<BooleanValue>(evalComparisonValue);
+  }
+
+  // if int > 0 then converted to true, else false
+  if ((lhs->Type() == ValueType::NUMBER && rhs->Type() == ValueType::BOOLEAN) ||
+      (lhs->Type() == ValueType::BOOLEAN && rhs->Type() == ValueType::NUMBER)) {
+    if (lhs->Type() != ValueType::NUMBER) {
+      RuntimeValuePtr temp = lhs;
+      lhs = rhs;
+      rhs = temp;
+    }
+    std::string numberToBool = std::stoi(lhs->Value()) > 0 ? "true" : "false";
+    bool isEqualValue = numberToBool == rhs->Value();
+    std::string evalComparisonValue = isEqualValue ? "true" : "false";
+    if (!isEqualOp) {
+      evalComparisonValue = isEqualValue ? "false" : "true";
+    }
+
+    return std::make_shared<BooleanValue>(evalComparisonValue);
+  }
+  return std::make_unique<BooleanValue>("false");
 }

@@ -23,12 +23,18 @@ Refer [AParser Language Syntax Documentation](https://github.com/daeisbae/AParse
 ## Project Structure
 ```
 AParser
-├── ast                      // Defines the Abstract Syntax Tree (Expressions and Statements)
-│   ├── ast.cpp
-│   ├── ast.hpp
-│   └── CMakeLists.txt
 ├── CMakeLists.txt
-├── file                     // Read the file that contains the code
+├── LICENSE
+├── README.md
+├── main.cpp
+├── rmcmake.sh
+├── ast                     // Defines the Abstract Syntax Tree (Expressions and Statements)
+│   ├── CMakeLists.txt
+│   ├── ast.cpp
+│   └── ast.hpp
+├── docs
+│   └── README.md
+├── file                    // Read the file that contains the code
 │   ├── CMakeLists.txt
 │   ├── file.cpp
 │   └── file.hpp
@@ -36,8 +42,6 @@ AParser
 │   ├── CMakeLists.txt
 │   ├── lexer.cpp
 │   └── lexer.hpp
-├── LICENSE
-├── main.cpp
 ├── operator
 │   ├── CMakeLists.txt
 │   ├── operator.cpp
@@ -46,8 +50,10 @@ AParser
 │   ├── CMakeLists.txt
 │   ├── parser.cpp
 │   └── parser.hpp
-├── README.md
-├── rmcmake.sh
+├── runtime
+│   ├── CMakeLists.txt
+│   ├── runtime.cpp
+│   └── runtime.hpp
 ├── stringutil              // Utility for string manipulation
 │   ├── CMakeLists.txt
 │   ├── stringutil.cpp
@@ -56,6 +62,7 @@ AParser
 │   ├── CMakeLists.txt
 │   ├── test_lexer.cpp
 │   ├── test_main.cpp
+│   ├── test_runtime.cpp
 │   └── test_stringutil.cpp
 └── token                   // Generate Token and define Token type
     ├── CMakeLists.txt

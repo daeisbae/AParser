@@ -71,6 +71,8 @@ class Evaluater {
       VariableDeclarationStatement varDeclStmt);
   RuntimeValuePtr evaluateAssignIdentifierExpression(
       VariableAssignExpression varAssignExpr);
+  RuntimeValuePtr evaluateComparisonExpression(
+      ComparisonExpression compareExpr);
   RuntimeValuePtr evaluate(StatementPtr currStmt);
 
  public:

@@ -202,7 +202,7 @@ StatementPtr Parser::parseIdentifierDeclarationExpression() {
 
 ExpressionPtr Parser::parseIdentifierAssignmentExpression() {
   // Can be an identifier
-  ExpressionPtr left = parseAdditionExpression();
+  ExpressionPtr left = parseComparisonExpression();
 
   parseWhitespaceExpression();
 
@@ -219,6 +219,24 @@ ExpressionPtr Parser::parseIdentifierAssignmentExpression() {
     parseWhitespaceExpression();
 
     return std::make_shared<VariableAssignExpression>(varExpr->Name, value);
+  }
+
+  return left;
+}
+
+ExpressionPtr Parser::parseComparisonExpression() {
+  ExpressionPtr left = parseAdditionExpression();
+  parseWhitespaceExpression();
+
+  while (peek()->Type() == TokenType::OPERATOR &&
+         (peek()->OpPtr()->Type() == OperatorType::NOT_EQUAL ||
+          peek()->OpPtr()->Type() == OperatorType::EQUAL)) {
+    const std::string opVal = eat()->Text();
+    parseWhitespaceExpression();
+    ExpressionPtr right = parsePrimaryExpression();
+    parseWhitespaceExpression();
+
+    left = ExpressionPtr(new ComparisonExpression(left, opVal, right));
   }
 
   return left;

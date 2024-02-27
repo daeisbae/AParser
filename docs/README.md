@@ -69,3 +69,31 @@ Examples
 >>> b
 0
 ```
+
+## Value Comparison
+- Use of comparison operator (==, !=) to compare values
+
+```
+<value | variable> == <value | variable>
+<value | variable> != <value | variable>
+```
+
+Examples
+```
+./AParser
+>>> 1 == 1
+true
+>>> 1 == -1
+false
+>>> 1 == true
+true
+>>> 0 == false
+true
+>>> -1 == false
+true
+>>> set hello = false
+false
+>>> hello == false
+true
+>>> 
+```

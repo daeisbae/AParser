@@ -11,24 +11,24 @@
 
 class Lexer {
  private:
-  FilePtr file;
-  std::queue<char> textqueue;
-  int line;
+  FilePtr file_ptr_;
+  std::queue<char> text_queue_;
+  int line_;
 
   // Parse the string
-  std::string readStr();
+  std::string ReadStr();
   // Parse the number
-  std::string readNum();
+  std::string ReadNum();
   // Parse the literal (variable/function naming)
-  std::string readLiteral();
+  std::string ReadLiteral();
 
-  std::string readOp();
+  std::string ReadOp();
 
-  std::string readWhitespace();
+  std::string ReadWhitespace();
 
  public:
   Lexer(std::string input);
-  Lexer(FilePtr fileptr);
+  Lexer(FilePtr file_ptr);
   ~Lexer();
 
   // Return the keyword into tokentype
@@ -40,32 +40,32 @@ class Lexer {
 
 class WrongLexingException : public std::exception {
  private:
-  std::string errinfo;
+  std::string err_info_;
 
  public:
-  WrongLexingException(std::string err) : errinfo(err){};
+  WrongLexingException(std::string err_info) : err_info_(err_info){};
 
-  const char* what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return err_info_.c_str(); }
 };
 
 class LexLineOutOfBoundException : public std::exception {
  private:
-  std::string errinfo;
+  std::string err_info_;
 
  public:
-  LexLineOutOfBoundException(std::string err) : errinfo(err){};
+  LexLineOutOfBoundException(std::string err_info) : err_info_(err_info){};
 
-  const char* what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return err_info_.c_str(); }
 };
 
 class NullFileMemberException : public std::exception {
  private:
-  std::string errinfo;
+  std::string err_info_;
 
  public:
-  NullFileMemberException(std::string err) : errinfo(err){};
+  NullFileMemberException(std::string err_info) : err_info_(err_info){};
 
-  const char* what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return err_info_.c_str(); }
 };
 
 #endif

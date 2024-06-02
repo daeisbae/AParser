@@ -9,30 +9,30 @@
 #include "stringutil.hpp"
 #include "token.hpp"
 
-Lexer::Lexer(FilePtr fileptr) {
-  this->file = fileptr;
-  line = 1;
-  textqueue = ConvertStringToQueue(fileptr->Read());
+Lexer::Lexer(FilePtr file_ptr) {
+  file_ptr_ = file_ptr;
+  line_ = 1;
+  text_queue_ = ConvertStringToQueue(file_ptr_->Read());
 }
 
 Lexer::Lexer(std::string input) {
-  textqueue = ConvertStringToQueue(input);
-  line = 1;
+  text_queue_ = ConvertStringToQueue(input);
+  line_ = 1;
 }
 
 Lexer::~Lexer() {}
 
-std::string Lexer::readStr() {
-  if (textqueue.front() != '\"')
+std::string Lexer::ReadStr() {
+  if (text_queue_.front() != '\"')
     throw WrongLexingException("Double quote for string not found");
 
   // Pop the double quote (starting point of the string)
-  textqueue.pop();
+  text_queue_.pop();
 
   std::string str_val;
 
-  while (!textqueue.empty()) {
-    if (textqueue.front() == '\0') {
+  while (!text_queue_.empty()) {
+    if (text_queue_.front() == '\0') {
       std::stringstream ssInvalidStrMsg;
       ssInvalidStrMsg << "Ending double quote not found after \"" << str_val
                       << "\"";
@@ -40,67 +40,68 @@ std::string Lexer::readStr() {
     }
 
     // If it is the ending double quote of the string
-    if (textqueue.front() == '\"' && str_val.back() != '\\') break;
+    if (text_queue_.front() == '\"' && str_val.back() != '\\') break;
 
     // If it is the double quote inside the string
-    if (textqueue.front() == '\"' && str_val.back() == '\\') str_val.pop_back();
+    if (text_queue_.front() == '\"' && str_val.back() == '\\')
+      str_val.pop_back();
 
-    str_val.push_back(textqueue.front());
-    textqueue.pop();
+    str_val.push_back(text_queue_.front());
+    text_queue_.pop();
   }
 
-  textqueue.pop();
+  text_queue_.pop();
 
   return str_val;
 }
 
-std::string Lexer::readNum() {
+std::string Lexer::ReadNum() {
   std::string num_val;
 
-  while (!textqueue.empty() && std::isdigit(textqueue.front())) {
-    num_val.push_back(textqueue.front());
-    textqueue.pop();
+  while (!text_queue_.empty() && std::isdigit(text_queue_.front())) {
+    num_val.push_back(text_queue_.front());
+    text_queue_.pop();
   };
 
   return num_val;
 }
 
-std::string Lexer::readLiteral() {
+std::string Lexer::ReadLiteral() {
   std::string str_val;
 
-  if (!isalpha(textqueue.front()))
+  if (!isalpha(text_queue_.front()))
     throw WrongLexingException("Alphabet not found");
-  str_val.push_back(textqueue.front());
-  textqueue.pop();
+  str_val.push_back(text_queue_.front());
+  text_queue_.pop();
 
-  while (!textqueue.empty() && isalnum(textqueue.front())) {
-    str_val.push_back(textqueue.front());
-    textqueue.pop();
+  while (!text_queue_.empty() && isalnum(text_queue_.front())) {
+    str_val.push_back(text_queue_.front());
+    text_queue_.pop();
   }
 
   return str_val;
 }
 
-std::string Lexer::readOp() {
+std::string Lexer::ReadOp() {
   std::string allowed_op = "(){}!=+-*/";
-  if (allowed_op.find(textqueue.front()) == std::string::npos)
+  if (allowed_op.find(text_queue_.front()) == std::string::npos)
     throw WrongLexingException("Allowed Operator not found");
 
   std::string op_str;
-  op_str.push_back(textqueue.front());
-  textqueue.pop();
+  op_str.push_back(text_queue_.front());
+  text_queue_.pop();
 
   bool isMultiplePunctuationAllowed = Operator(op_str).IsOverloadable();
 
   // This design will let 1-2 chars of punct in one operator.
   if (!isMultiplePunctuationAllowed) return op_str;
 
-  op_str.push_back(textqueue.front());
+  op_str.push_back(text_queue_.front());
 
   // Constructor validate Operator punctuation. if err, remove the operator
   try {
     Operator optest(op_str);
-    textqueue.pop();
+    text_queue_.pop();
   } catch (InvalidOperatorTypeException) {
     op_str.pop_back();
   }
@@ -108,14 +109,14 @@ std::string Lexer::readOp() {
   return op_str;
 }
 
-std::string Lexer::readWhitespace() {
+std::string Lexer::ReadWhitespace() {
   std::string str_val;
-  if (!isspace(textqueue.front()))
+  if (!isspace(text_queue_.front()))
     throw WrongLexingException("Whitespace not found");
 
-  while (!textqueue.empty() && isspace(textqueue.front())) {
-    str_val.push_back(textqueue.front());
-    textqueue.pop();
+  while (!text_queue_.empty() && isspace(text_queue_.front())) {
+    str_val.push_back(text_queue_.front());
+    text_queue_.pop();
   }
 
   return str_val;
@@ -135,20 +136,20 @@ TokenType Lexer::GetReservedKeywordTokenType(std::string keyword) const {
 }
 
 TokenPtr Lexer::NextToken() {
-  TokenPtr tokptr;
+  TokenPtr tok_ptr;
 
-  TokenType toktype;
+  TokenType tok_type;
   // Check whether it is for literal or number
-  std::string textval;
+  std::string text_val;
 
-  switch (static_cast<int>(textqueue.front())) {
+  switch (static_cast<int>(text_queue_.front())) {
     case 0:  // NULL terminator
-      tokptr = GenerateToken("", TokenType::EOL, OperatorPtr(nullptr));
+      tok_ptr = GenerateToken("", TokenType::EOL, OperatorPtr(nullptr));
       break;
     case 9:   // \t
     case 32:  // Space
-      tokptr = GenerateToken(readWhitespace(), TokenType::WHITESPACE,
-                             OperatorPtr(nullptr));
+      tok_ptr = GenerateToken(ReadWhitespace(), TokenType::WHITESPACE,
+                              OperatorPtr(nullptr));
       break;
     case 33:   // !
     case 40:   // (
@@ -160,37 +161,37 @@ TokenPtr Lexer::NextToken() {
     case 61:   // =
     case 123:  // {
     case 125:  // }
-      textval = readOp();
-      tokptr = GenerateToken(textval, TokenType::OPERATOR, GenerateOp(textval));
+      text_val = ReadOp();
+      tok_ptr =
+          GenerateToken(text_val, TokenType::OPERATOR, GenerateOp(text_val));
       break;
     case 34:  // "
-      tokptr =
-          GenerateToken(readStr(), TokenType::STRING, OperatorPtr(nullptr));
+      tok_ptr =
+          GenerateToken(ReadStr(), TokenType::STRING, OperatorPtr(nullptr));
       break;
     case 48 ... 57:  // 0-9
       // Validate if it is number
-      tokptr =
-          GenerateToken(readNum(), TokenType::INTEGER, OperatorPtr(nullptr));
+      tok_ptr =
+          GenerateToken(ReadNum(), TokenType::INTEGER, OperatorPtr(nullptr));
       break;
     case 65 ... 90:   // A-Z
     case 97 ... 122:  // a-z
       // Validate reserved string or if it is identifier
-      textval = readLiteral();
-      toktype = GetReservedKeywordTokenType(textval);
-      if (toktype == TokenType::INVALID) {
-        tokptr =
-            GenerateToken(textval, TokenType::IDENTIFIER, OperatorPtr(nullptr));
+      text_val = ReadLiteral();
+      tok_type = GetReservedKeywordTokenType(text_val);
+      if (tok_type == TokenType::INVALID) {
+        tok_ptr = GenerateToken(text_val, TokenType::IDENTIFIER,
+                                OperatorPtr(nullptr));
       } else {
-        tokptr = GenerateToken(textval, toktype, OperatorPtr(nullptr));
+        tok_ptr = GenerateToken(text_val, tok_type, OperatorPtr(nullptr));
       }
       break;
     default:
       std::stringstream ssInvalidTokMsg;
-      ssInvalidTokMsg << "Token: \'" << textqueue.front()
+      ssInvalidTokMsg << "Token: \'" << text_queue_.front()
                       << "\' is not allowed";
       throw WrongLexingException(ssInvalidTokMsg.str());
-      break;
   }
 
-  return tokptr;
+  return tok_ptr;
 }

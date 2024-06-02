@@ -26,31 +26,31 @@ class NullValue : public RuntimeValue {
 
 class NumberValue : public RuntimeValue {
  private:
-  int value;
+  int number_;
 
  public:
-  NumberValue(int number) : value(number){};
+  NumberValue(int number) : number_(number){};
 
   ValueType Type() const { return ValueType::NUMBER; }
-  std::string Value() const { return std::to_string(value); }
+  std::string Value() const { return std::to_string(number_); }
 };
 
 class BooleanValue : public RuntimeValue {
  private:
-  std::string value;
+  std::string boolean_;
 
  public:
-  BooleanValue(std::string boolValue) : value(boolValue){};
+  BooleanValue(std::string boolean) : boolean_(boolean){};
 
   ValueType Type() const { return ValueType::BOOLEAN; }
-  std::string Value() const { return value; }
+  std::string Value() const { return boolean_; }
 };
 
 typedef std::shared_ptr<RuntimeValue> RuntimeValuePtr;
 
 class Environment {
  private:
-  std::unordered_map<std::string, RuntimeValuePtr> variablemap;
+  std::unordered_map<std::string, RuntimeValuePtr> var_map_;
 
  public:
   Environment();
@@ -61,54 +61,55 @@ class Environment {
 
 class Evaluater {
  private:
-  Program program;
-  Environment env;
+  Program instructions_;
+  Environment env_;
 
-  RuntimeValuePtr evaluateBinaryExpression(BinaryExpression binExpr);
-  NumberValue evaluateNumericBinaryExpression(NumberValue lfs, NumberValue rhs,
+  RuntimeValuePtr EvaluateBinaryExpression(BinaryExpression bin_expr);
+  NumberValue EvaluateNumericBinaryExpression(NumberValue lhs, NumberValue rhs,
                                               std::string op);
-  RuntimeValuePtr evaluateDefiningIdentifierExpression(
+  RuntimeValuePtr EvaluateDefiningIdentifierExpression(
       VariableDeclarationStatement varDeclStmt);
-  RuntimeValuePtr evaluateAssignIdentifierExpression(
+  RuntimeValuePtr EvaluateAssignIdentifierExpression(
       VariableAssignExpression varAssignExpr);
-  RuntimeValuePtr evaluateComparisonExpression(
+  RuntimeValuePtr EvaluateComparisonExpression(
       ComparisonExpression compareExpr);
-  RuntimeValuePtr evaluate(StatementPtr currStmt);
+  RuntimeValuePtr Evaluate(StatementPtr currStmt);
 
  public:
   Evaluater();
 
-  std::string EvaluateProgram(Program astProgram);
+  std::string EvaluateProgram(Program instructions);
 };
 
 class UnexpectedStatementException : public std::exception {
  private:
-  std::string errinfo;
+  std::string err_info_;
 
  public:
-  UnexpectedStatementException(std::string err) : errinfo(err){};
+  UnexpectedStatementException(std::string err_info) : err_info_(err_info){};
 
-  const char *what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return err_info_.c_str(); }
 };
 
 class VariableAlreadyDeclaredException : public std::exception {
  private:
-  std::string errinfo;
+  std::string err_info_;
 
  public:
-  VariableAlreadyDeclaredException(std::string err) : errinfo(err){};
+  VariableAlreadyDeclaredException(std::string err_info)
+      : err_info_(err_info){};
 
-  const char *what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return err_info_.c_str(); }
 };
 
 class VariableDoesNotExistException : public std::exception {
  private:
-  std::string errinfo;
+  std::string err_info_;
 
  public:
-  VariableDoesNotExistException(std::string err) : errinfo(err){};
+  VariableDoesNotExistException(std::string err_info) : err_info_(err_info){};
 
-  const char *what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return err_info_.c_str(); }
 };
 
 #endif

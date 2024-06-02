@@ -8,43 +8,43 @@
 
 class Parser {
  private:
-  std::queue<TokenPtr> tokqueue;
+  std::queue<TokenPtr> tok_queue_;
 
   // Preview the next token
-  TokenPtr peek();
+  TokenPtr Peek();
 
   // Check if the token matches the expected TokenType | OperatorType
   // If it match, return TokenPtr
   // Else throw Exception
-  TokenPtr expectedTokenType(TokenType expectedTokType);
-  TokenPtr expectedTokenType(OperatorType expectedOpType);
+  TokenPtr ExpectedTokenType(TokenType expected_tok_type);
+  TokenPtr ExpectedTokenType(OperatorType expected_op_type);
 
-  // Return the peeked value and pops the tokqueue
-  TokenPtr eat();
+  // Return the peeked value and pops the tok_queue
+  TokenPtr Eat();
 
-  StatementPtr parseStatement();
-  ExpressionPtr parseExpression();
+  StatementPtr ParseStatement();
+  ExpressionPtr ParseExpression();
 
   // Reads the token and assign the value as expression
-  ExpressionPtr parsePrimaryExpression();
+  ExpressionPtr ParsePrimaryExpression();
 
   // + and - operations
-  ExpressionPtr parseAdditionExpression();
+  ExpressionPtr ParseAdditionExpression();
 
   // * and / operations
-  ExpressionPtr parseMultiplicationExpression();
+  ExpressionPtr ParseMultiplicationExpression();
 
   // Read whitespaces if it exists
-  ExpressionPtr parseWhitespaceExpression();
+  ExpressionPtr ParseWhitespaceExpression();
 
   // Declaration Identifier
-  StatementPtr parseIdentifierDeclarationExpression();
+  StatementPtr ParseIdentifierDeclarationExpression();
 
   // Assignment Identifier
-  ExpressionPtr parseIdentifierAssignmentExpression();
+  ExpressionPtr ParseIdentifierAssignmentExpression();
 
   // Comparison (== , !=)
-  ExpressionPtr parseComparisonExpression();
+  ExpressionPtr ParseComparisonExpression();
 
  public:
   Parser();
@@ -55,12 +55,12 @@ class Parser {
 
 class UnexpectedTokenParsedException : public std::exception {
  private:
-  std::string errinfo;
+  std::string err_info_;
 
  public:
-  UnexpectedTokenParsedException(std::string err) : errinfo(err){};
+  UnexpectedTokenParsedException(std::string err_info) : err_info_(err_info){};
 
-  const char *what() const noexcept override { return errinfo.c_str(); }
+  const char *what() const noexcept override { return err_info_.c_str(); }
 };
 
 #endif

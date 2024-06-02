@@ -5,259 +5,259 @@
 #include <unordered_map>
 
 Environment::Environment() {
-  variablemap = std::unordered_map<std::string, RuntimeValuePtr>();
+  var_map_ = std::unordered_map<std::string, RuntimeValuePtr>();
 }
 
-void Environment::DefineVariable(std::string name,
-                                 RuntimeValuePtr runtimeValue) {
-  std::unordered_map<std::string, RuntimeValuePtr>::iterator varLocIter =
-      variablemap.find(name);
+void Environment::DefineVariable(std::string identifier,
+                                 RuntimeValuePtr runtime_val) {
+  std::unordered_map<std::string, RuntimeValuePtr>::iterator var_finder =
+      var_map_.find(identifier);
 
-  if (varLocIter != variablemap.cend()) {
+  if (var_finder != var_map_.cend()) {
     std::stringstream ssVariableAlreadyDeclaredMsg;
-    ssVariableAlreadyDeclaredMsg << "Variable : " << name
+    ssVariableAlreadyDeclaredMsg << "Variable : " << identifier
                                  << " already declared";
     throw VariableAlreadyDeclaredException(ssVariableAlreadyDeclaredMsg.str());
   }
 
-  variablemap.insert(make_pair(name, runtimeValue));
+  var_map_.insert(make_pair(identifier, runtime_val));
 }
 
-void Environment::AssignVariable(std::string name,
-                                 RuntimeValuePtr runtimeValue) {
-  std::unordered_map<std::string, RuntimeValuePtr>::iterator varLocIter =
-      variablemap.find(name);
+void Environment::AssignVariable(std::string identifier,
+                                 RuntimeValuePtr runtime_val) {
+  std::unordered_map<std::string, RuntimeValuePtr>::iterator var_finder =
+      var_map_.find(identifier);
 
-  if (varLocIter == variablemap.cend()) {
-    std::stringstream ssVariableNotDeclaredMsg;
-    ssVariableNotDeclaredMsg << "Variable : " << name
-                             << " is not declared, hence not assignable";
-    throw VariableDoesNotExistException(ssVariableNotDeclaredMsg.str());
+  if (var_finder == var_map_.cend()) {
+    std::stringstream ss_var_not_decl_msg;
+    ss_var_not_decl_msg << "Variable : " << identifier
+                        << " is not declared, hence not assignable";
+    throw VariableDoesNotExistException(ss_var_not_decl_msg.str());
   }
 
-  variablemap[name] = runtimeValue;
+  var_map_[identifier] = runtime_val;
 }
 
 RuntimeValuePtr Environment::GetRuntimeValue(std::string name) {
-  std::unordered_map<std::string, RuntimeValuePtr>::iterator varLocIter =
-      variablemap.find(name);
-  if (varLocIter == variablemap.end()) return RuntimeValuePtr(nullptr);
+  std::unordered_map<std::string, RuntimeValuePtr>::iterator var_finder =
+      var_map_.find(name);
+  if (var_finder == var_map_.end()) return RuntimeValuePtr(nullptr);
 
-  return varLocIter->second;
+  return var_finder->second;
 }
 
-Evaluater::Evaluater() { env = Environment(); }
+Evaluater::Evaluater() { env_ = Environment(); }
 
-std::string Evaluater::EvaluateProgram(Program astProgram) {
-  program = astProgram;
+std::string Evaluater::EvaluateProgram(Program instructions) {
+  Program program = instructions;
   RuntimeValuePtr lasteval;
-  std::queue<StatementPtr> stmtqueue = program.Body;
+  std::queue<StatementPtr> stmt_queue = program.body_;
 
-  while (!stmtqueue.empty()) {
-    lasteval = evaluate(stmtqueue.front());
-    stmtqueue.pop();
+  while (!stmt_queue.empty()) {
+    lasteval = Evaluate(stmt_queue.front());
+    stmt_queue.pop();
   }
 
   return lasteval->Value();
 }
 
-RuntimeValuePtr Evaluater::evaluateBinaryExpression(
-    BinaryExpression binaryExpr) {
-  RuntimeValuePtr lhs = evaluate(binaryExpr.Left);
-  RuntimeValuePtr rhs = evaluate(binaryExpr.Right);
+RuntimeValuePtr Evaluater::EvaluateBinaryExpression(
+    BinaryExpression binary_expr) {
+  RuntimeValuePtr lhs = Evaluate(binary_expr.left_);
+  RuntimeValuePtr rhs = Evaluate(binary_expr.right_);
 
   if (lhs->Type() == ValueType::NUMBER && rhs->Type() == ValueType::NUMBER) {
-    std::shared_ptr<NumberValue> lhsNumber =
+    std::shared_ptr<NumberValue> lhs_number =
         std::dynamic_pointer_cast<NumberValue>(lhs);
-    std::shared_ptr<NumberValue> rhsNumber =
+    std::shared_ptr<NumberValue> rhs_number =
         std::dynamic_pointer_cast<NumberValue>(rhs);
-    NumberValue result =
-        evaluateNumericBinaryExpression(*lhsNumber, *rhsNumber, binaryExpr.OP);
+    NumberValue result = EvaluateNumericBinaryExpression(
+        *lhs_number, *rhs_number, binary_expr.op_);
     return std::make_unique<NumberValue>(result);
   }
   if ((lhs->Type() == ValueType::BOOLEAN || lhs->Type() == ValueType::NUMBER) &&
       (rhs->Type() == ValueType::BOOLEAN || rhs->Type() == ValueType::NUMBER)) {
-    std::shared_ptr<NumberValue> lhsNumber;
-    std::shared_ptr<NumberValue> rhsNumber;
+    std::shared_ptr<NumberValue> lhs_number;
+    std::shared_ptr<NumberValue> rhs_number;
     if (lhs->Type() == ValueType::BOOLEAN) {
       if (lhs->Value() == "true")
-        lhsNumber = std::make_shared<NumberValue>(1);
+        lhs_number = std::make_shared<NumberValue>(1);
       else
-        lhsNumber = std::make_shared<NumberValue>(0);
+        lhs_number = std::make_shared<NumberValue>(0);
     } else {
       std::dynamic_pointer_cast<NumberValue>(lhs);
     }
 
     if (rhs->Type() == ValueType::BOOLEAN) {
       if (rhs->Value() == "true")
-        rhsNumber = std::make_shared<NumberValue>(1);
+        rhs_number = std::make_shared<NumberValue>(1);
       else
-        rhsNumber = std::make_shared<NumberValue>(0);
+        rhs_number = std::make_shared<NumberValue>(0);
     } else {
-      rhsNumber = std::dynamic_pointer_cast<NumberValue>(rhs);
+      rhs_number = std::dynamic_pointer_cast<NumberValue>(rhs);
     }
 
-    NumberValue result =
-        evaluateNumericBinaryExpression(*lhsNumber, *rhsNumber, binaryExpr.OP);
+    NumberValue result = EvaluateNumericBinaryExpression(
+        *lhs_number, *rhs_number, binary_expr.op_);
     return std::make_unique<NumberValue>(result);
   }
 
   return std::make_unique<NullValue>();
 }
 
-NumberValue Evaluater::evaluateNumericBinaryExpression(NumberValue lfs,
+NumberValue Evaluater::EvaluateNumericBinaryExpression(NumberValue lhs,
                                                        NumberValue rhs,
                                                        std::string op) {
   int result = 0;
-  int lfsVal = std::stoi(lfs.Value());
-  int rhsVal = std::stoi(rhs.Value());
+  int lhs_val = std::stoi(lhs.Value());
+  int rhs_val = std::stoi(rhs.Value());
 
   if (op == "+") {
-    result = lfsVal + rhsVal;
+    result = lhs_val + rhs_val;
   } else if (op == "-") {
-    result = lfsVal - rhsVal;
+    result = lhs_val - rhs_val;
   } else if (op == "/") {
-    result = lfsVal / rhsVal;
+    result = lhs_val / rhs_val;
   } else if (op == "*") {
-    result = lfsVal * rhsVal;
+    result = lhs_val * rhs_val;
   }
   return NumberValue(result);
 }
 
-RuntimeValuePtr Evaluater::evaluate(StatementPtr currStmt) {
+RuntimeValuePtr Evaluater::Evaluate(StatementPtr curr_stmt) {
   RuntimeValuePtr matchValue;
-  std::stringstream ssInvalidStmtMsg;
+  std::stringstream ss_invalid_stmt_msg;
 
-  switch (currStmt->Type()) {
+  switch (curr_stmt->Type()) {
     case NodeType::NullExpr:
       matchValue = std::make_unique<NullValue>();
       break;
     case NodeType::IntegerExpr: {
-      std::shared_ptr<IntegerExpression> integerExpr =
-          std::dynamic_pointer_cast<IntegerExpression>(currStmt);
-      if (!integerExpr) {
-        ssInvalidStmtMsg
+      std::shared_ptr<IntegerExpression> int_expr =
+          std::dynamic_pointer_cast<IntegerExpression>(curr_stmt);
+      if (!int_expr) {
+        ss_invalid_stmt_msg
             << "Failed to cast StatementPtr to IntegerExpressionPtr : "
-            << currStmt;
-        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+            << curr_stmt;
+        throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
       }
-      matchValue = std::make_unique<NumberValue>(integerExpr->Value);
+      matchValue = std::make_unique<NumberValue>(int_expr->tok_value_);
       break;
     }
     case NodeType::BinaryExpr: {
-      std::shared_ptr<BinaryExpression> binaryExpr =
-          std::dynamic_pointer_cast<BinaryExpression>(currStmt);
-      if (!binaryExpr) {
-        ssInvalidStmtMsg
+      std::shared_ptr<BinaryExpression> binary_expr =
+          std::dynamic_pointer_cast<BinaryExpression>(curr_stmt);
+      if (!binary_expr) {
+        ss_invalid_stmt_msg
             << "Failed to cast StatementPtr to BinaryExpressionPtr : "
-            << currStmt;
-        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+            << curr_stmt;
+        throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
       }
-      matchValue = evaluateBinaryExpression(*binaryExpr);
+      matchValue = EvaluateBinaryExpression(*binary_expr);
       break;
     }
     case NodeType::IdentifierExpr: {
-      std::shared_ptr<IdentifierExpression> identifierExpr =
-          std::dynamic_pointer_cast<IdentifierExpression>(currStmt);
-      if (!identifierExpr) {
-        ssInvalidStmtMsg
+      std::shared_ptr<IdentifierExpression> identifier_expr =
+          std::dynamic_pointer_cast<IdentifierExpression>(curr_stmt);
+      if (!identifier_expr) {
+        ss_invalid_stmt_msg
             << "Failed to cast StatementPtr to IdentifierExpressionPtr : "
-            << currStmt;
-        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+            << curr_stmt;
+        throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
       }
-      matchValue = env.GetRuntimeValue(identifierExpr->Name);
+      matchValue = env_.GetRuntimeValue(identifier_expr->identifier_);
       break;
     }
     case NodeType::VariableDeclarationStmt: {
-      std::shared_ptr<VariableDeclarationStatement> varDeclStmt =
-          std::dynamic_pointer_cast<VariableDeclarationStatement>(currStmt);
-      if (!varDeclStmt) {
-        ssInvalidStmtMsg << "Failed to cast StatementPtr to "
-                            "VariableDeclarationStatementPtr : "
-                         << currStmt;
-        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+      std::shared_ptr<VariableDeclarationStatement> var_decl_stmt =
+          std::dynamic_pointer_cast<VariableDeclarationStatement>(curr_stmt);
+      if (!var_decl_stmt) {
+        ss_invalid_stmt_msg << "Failed to cast StatementPtr to "
+                               "VariableDeclarationStatementPtr : "
+                            << curr_stmt;
+        throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
       }
-      matchValue = evaluateDefiningIdentifierExpression(*varDeclStmt);
+      matchValue = EvaluateDefiningIdentifierExpression(*var_decl_stmt);
       break;
     }
     case NodeType::VariableAssignExpr: {
-      std::shared_ptr<VariableAssignExpression> varDeclExpr =
-          std::dynamic_pointer_cast<VariableAssignExpression>(currStmt);
-      if (!varDeclExpr) {
-        ssInvalidStmtMsg << "Failed to cast StatementPtr to "
-                            "VariableAssignExpressionPtr : "
-                         << currStmt;
-        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+      std::shared_ptr<VariableAssignExpression> var_decl_expr =
+          std::dynamic_pointer_cast<VariableAssignExpression>(curr_stmt);
+      if (!var_decl_expr) {
+        ss_invalid_stmt_msg << "Failed to cast StatementPtr to "
+                               "VariableAssignExpressionPtr : "
+                            << curr_stmt;
+        throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
       }
-      matchValue = evaluateAssignIdentifierExpression(*varDeclExpr);
+      matchValue = EvaluateAssignIdentifierExpression(*var_decl_expr);
       break;
     }
     case NodeType::ComparisonExpr: {
-      std::shared_ptr<ComparisonExpression> compareExpr =
-          std::dynamic_pointer_cast<ComparisonExpression>(currStmt);
-      if (!compareExpr) {
-        ssInvalidStmtMsg << "Failed to cast StatementPtr to "
-                            "ComparisonExpression : "
-                         << currStmt;
-        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+      std::shared_ptr<ComparisonExpression> compare_expr =
+          std::dynamic_pointer_cast<ComparisonExpression>(curr_stmt);
+      if (!compare_expr) {
+        ss_invalid_stmt_msg << "Failed to cast StatementPtr to "
+                               "ComparisonExpression : "
+                            << curr_stmt;
+        throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
       }
-      matchValue = evaluateComparisonExpression(*compareExpr);
+      matchValue = EvaluateComparisonExpression(*compare_expr);
       break;
     }
     case NodeType::BooleanExpr: {
-      std::shared_ptr<BooleanExpression> boolExpr =
-          std::dynamic_pointer_cast<BooleanExpression>(currStmt);
-      if (!boolExpr) {
-        ssInvalidStmtMsg
+      std::shared_ptr<BooleanExpression> bool_expr =
+          std::dynamic_pointer_cast<BooleanExpression>(curr_stmt);
+      if (!bool_expr) {
+        ss_invalid_stmt_msg
             << "Failed to cast StatementPtr to BooleanExpression : "
-            << currStmt;
-        throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+            << curr_stmt;
+        throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
       }
-      matchValue = std::make_unique<BooleanValue>(boolExpr->Value);
+      matchValue = std::make_unique<BooleanValue>(bool_expr->boolean_);
       break;
     }
     default:
-      ssInvalidStmtMsg
+      ss_invalid_stmt_msg
           << "Unimplemented Statement(Expression) in Evaluate Expression : "
-          << currStmt;
-      throw UnexpectedStatementException(ssInvalidStmtMsg.str());
+          << curr_stmt;
+      throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
       break;
   }
   return matchValue;
 }
 
-RuntimeValuePtr Evaluater::evaluateDefiningIdentifierExpression(
-    VariableDeclarationStatement varDeclStmt) {
-  RuntimeValuePtr evalAssignedVal = evaluate(varDeclStmt.Value);
-  env.DefineVariable(varDeclStmt.Name, evalAssignedVal);
+RuntimeValuePtr Evaluater::EvaluateDefiningIdentifierExpression(
+    VariableDeclarationStatement var_decl_stmt) {
+  RuntimeValuePtr evalAssignedVal = Evaluate(var_decl_stmt.value_);
+  env_.DefineVariable(var_decl_stmt.identifier_, evalAssignedVal);
 
   return evalAssignedVal;
 }
 
-RuntimeValuePtr Evaluater::evaluateAssignIdentifierExpression(
-    VariableAssignExpression varAssignExpr) {
-  RuntimeValuePtr evalAssignedVal = evaluate(varAssignExpr.Value);
-  env.AssignVariable(varAssignExpr.Name, evalAssignedVal);
+RuntimeValuePtr Evaluater::EvaluateAssignIdentifierExpression(
+    VariableAssignExpression var_assign_expr) {
+  RuntimeValuePtr eval_assigned_val = Evaluate(var_assign_expr.Value);
+  env_.AssignVariable(var_assign_expr.Name, eval_assigned_val);
 
-  return evalAssignedVal;
+  return eval_assigned_val;
 }
 
-RuntimeValuePtr Evaluater::evaluateComparisonExpression(
-    ComparisonExpression compareExpr) {
-  RuntimeValuePtr lhs = evaluate(compareExpr.Left);
-  RuntimeValuePtr rhs = evaluate(compareExpr.Right);
+RuntimeValuePtr Evaluater::EvaluateComparisonExpression(
+    ComparisonExpression compare_expr) {
+  RuntimeValuePtr lhs = Evaluate(compare_expr.left_);
+  RuntimeValuePtr rhs = Evaluate(compare_expr.right_);
 
-  bool isEqualOp = compareExpr.OP == "==" ? true : false;
+  bool is_equal_op = compare_expr.op_ == "==" ? true : false;
 
   // Compare value of equal type
   if (lhs->Type() == rhs->Type()) {
-    bool isEqualValue = lhs->Value() == rhs->Value();
-    std::string evalComparisonValue = isEqualValue ? "true" : "false";
-    if (!isEqualOp) {
-      evalComparisonValue = isEqualValue ? "false" : "true";
+    bool is_equal_val = lhs->Value() == rhs->Value();
+    std::string eval_boolean_str = is_equal_val ? "true" : "false";
+    if (!is_equal_op) {
+      eval_boolean_str = is_equal_val ? "false" : "true";
     }
 
-    return std::make_shared<BooleanValue>(evalComparisonValue);
+    return std::make_shared<BooleanValue>(eval_boolean_str);
   }
 
   // if int > 0 then converted to true, else false
@@ -268,14 +268,14 @@ RuntimeValuePtr Evaluater::evaluateComparisonExpression(
       lhs = rhs;
       rhs = temp;
     }
-    std::string numberToBool = std::stoi(lhs->Value()) > 0 ? "true" : "false";
-    bool isEqualValue = numberToBool == rhs->Value();
-    std::string evalComparisonValue = isEqualValue ? "true" : "false";
-    if (!isEqualOp) {
-      evalComparisonValue = isEqualValue ? "false" : "true";
+    std::string num_to_bool = std::stoi(lhs->Value()) > 0 ? "true" : "false";
+    bool is_equal_val = num_to_bool == rhs->Value();
+    std::string eval_boolean_str = is_equal_val ? "true" : "false";
+    if (!is_equal_op) {
+      eval_boolean_str = is_equal_val ? "false" : "true";
     }
 
-    return std::make_shared<BooleanValue>(evalComparisonValue);
+    return std::make_shared<BooleanValue>(eval_boolean_str);
   }
   return std::make_unique<BooleanValue>("false");
 }

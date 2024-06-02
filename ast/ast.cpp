@@ -1,54 +1,54 @@
 #include "ast.hpp"
 
-std::string NodeEnumToString(NodeType nodetype) {
-  std::string typestr;
+std::string NodeEnumToString(NodeType node_type) {
+  std::string type_str;
 
-  switch (nodetype) {
+  switch (node_type) {
     case NodeType::Program:
-      typestr = "ProgramStatement";
+      type_str = "ProgramStatement";
       break;
     case NodeType::VariableDeclarationStmt:
-      typestr = "VariableDeclarationStatement";
+      type_str = "VariableDeclarationStatement";
       break;
     case NodeType::VariableAssignExpr:
-      typestr = "VariableAssignStatement";
+      type_str = "VariableAssignStatement";
       break;
     case NodeType::ComparisonExpr:
-      typestr = "ComparisonExpression";
+      type_str = "ComparisonExpression";
       break;
     case NodeType::IdentifierExpr:
-      typestr = "IdentifierExpression";
+      type_str = "IdentifierExpression";
       break;
     case NodeType::IntegerExpr:
-      typestr = "IntegerExpression";
+      type_str = "IntegerExpression";
       break;
     case NodeType::BinaryExpr:
-      typestr = "BinaryExpression";
+      type_str = "BinaryExpression";
       break;
     case NodeType::WhitespaceExpr:
-      typestr = "WhitespaceExpression";
+      type_str = "WhitespaceExpression";
       break;
     case NodeType::NullExpr:
-      typestr = "NullExpression";
+      type_str = "NullExpression";
       break;
     case NodeType::BooleanExpr:
-      typestr = "BooleanExpression";
+      type_str = "BooleanExpression";
       break;
     default:
-      typestr = "InvalidExpression";
+      type_str = "InvalidExpression";
       break;
   }
-  return typestr;
+  return type_str;
 }
 
 void Program::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " {\n";
 
-  std::queue<StatementPtr> copiedProgram = Body;
+  std::queue<StatementPtr> program_instructions = body_;
 
-  while (!copiedProgram.empty()) {
-    StatementPtr statement = copiedProgram.front();
-    copiedProgram.pop();
+  while (!program_instructions.empty()) {
+    StatementPtr statement = program_instructions.front();
+    program_instructions.pop();
     statement->PrintOstream(out);
     out << "\n";
   }
@@ -59,10 +59,10 @@ void Program::PrintOstream(std::ostream &out) const {
 void VariableDeclarationStatement::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
-  out << "Identifier : " << Name;
+  out << "Identifier : " << identifier_;
   out << ", ";
   out << "Value : ";
-  Value->PrintOstream(out);
+  value_->PrintOstream(out);
 
   out << " )";
 }
@@ -82,11 +82,11 @@ void ComparisonExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Left Value : ";
-  Left->PrintOstream(out);
+  left_->PrintOstream(out);
   out << ", ";
-  out << "Op Value : " << OP << ", ";
+  out << "Op Value : " << op_ << ", ";
   out << "Right Value : ";
-  Right->PrintOstream(out);
+  right_->PrintOstream(out);
   out << ", ";
 
   out << ")";
@@ -96,11 +96,11 @@ void BinaryExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Left Value : ";
-  Left->PrintOstream(out);
+  left_->PrintOstream(out);
   out << ", ";
-  out << "Op Value : " << OP << ", ";
+  out << "Op Value : " << op_ << ", ";
   out << "Right Value : ";
-  Right->PrintOstream(out);
+  right_->PrintOstream(out);
   out << ", ";
 
   out << ")";
@@ -109,7 +109,7 @@ void BinaryExpression::PrintOstream(std::ostream &out) const {
 void IdentifierExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
-  out << "Name : " << Name;
+  out << "Name : " << identifier_;
 
   out << ")";
 }
@@ -117,7 +117,7 @@ void IdentifierExpression::PrintOstream(std::ostream &out) const {
 void IntegerExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
-  out << "Value : " << Value;
+  out << "Value : " << tok_value_;
 
   out << ")";
 }
@@ -125,7 +125,7 @@ void IntegerExpression::PrintOstream(std::ostream &out) const {
 void WhitespaceExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
-  out << "Value : '" << Value;
+  out << "Value : '" << tok_value_;
 
   out << "' )";
 }
@@ -136,5 +136,5 @@ void NullExpression::PrintOstream(std::ostream &out) const {
 
 void BooleanExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " ( Value : '";
-  out << Value << "' )";
+  out << boolean_ << "' )";
 }

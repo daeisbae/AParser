@@ -5,10 +5,10 @@
 #include "stringutil.hpp"
 
 File::File(std::string filename) {
-  this->filename = filename;
+  filename_ = filename;
   std::ifstream fs;
 
-  fs.open(this->filename);
+  fs.open(filename_);
   if (!fs.is_open()) {
     throw FileNotOpenedException();
   }
@@ -18,12 +18,12 @@ File::File(std::string filename) {
 
   fs.close();
 
-  this->filedata = ss.str();
+    filename_ = ss.str();
 }
 
 File::~File() {}
 
 std::string File::Read() const {
-  if (filedata.empty()) throw FileNotOpenedException();
-  return this->filedata;
+  if (file_data_.empty()) throw FileNotOpenedException();
+  return file_data_;
 }

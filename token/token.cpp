@@ -1,23 +1,23 @@
 #include "token.hpp"
 
-Token::Token(const std::string& input, TokenType toktype, OperatorPtr op) {
-  this->value = input;
-  this->toktype = toktype;
-  this->op = op;
+Token::Token(const std::string &input, TokenType tok_type, OperatorPtr op) {
+  value_ = input;
+  tok_type_ = tok_type;
+  op_ = op;
 };
 
 Token::~Token(){
 
 };
 
-TokenType Token::Type() const { return toktype; }
+TokenType Token::Type() const { return tok_type_; }
 
-std::string Token::Text() const { return value; }
+std::string Token::Text() const { return value_; }
 
-OperatorPtr Token::OpPtr() const { return op; }
+OperatorPtr Token::OpPtr() const { return op_; }
 
-std::string Token::PrintTokenType(TokenType toktype) {
-  switch (toktype) {
+std::string Token::PrintTokenType(TokenType tok_type) {
+  switch (tok_type) {
     case TokenType::EOL:
       return "End of line";
     case TokenType::INVALID:
@@ -53,7 +53,7 @@ std::string Token::PrintTokenType(TokenType toktype) {
   }
 }
 
-TokenPtr GenerateToken(const std::string& input, TokenType toktype,
+TokenPtr GenerateToken(const std::string &input, TokenType tok_type,
                        OperatorPtr op) {
-  return TokenPtr(new Token(input, toktype, op));
+  return TokenPtr(new Token(input, tok_type, op));
 }

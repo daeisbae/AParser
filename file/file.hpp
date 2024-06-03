@@ -7,8 +7,8 @@
 
 class File {
  private:
-  std::string filename;
-  std::string filedata;
+  std::string filename_;
+  std::string file_data_;
 
  public:
   File(std::string filename);
@@ -19,7 +19,7 @@ class File {
 
 class FileNotOpenedException : public std::exception {
  public:
-  const char* what() const noexcept override { return "File Not Opened"; }
+  const char *what() const noexcept override { return "File Not Opened"; }
 };
 
 typedef std::shared_ptr<File> FilePtr;

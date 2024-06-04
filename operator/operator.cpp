@@ -3,67 +3,67 @@
 #include <sstream>
 
 Operator::Operator(std::string input) {
-  this->value = input;
+  value_ = input;
 
-  this->optype = GetOperatorType(input);
+  op_type_ = GetOperatorType(input);
 
-  fillOperatorMembers();
+  FillOperatorMembers();
 }
 
-Operator::Operator(std::string input, OperatorType opType) {
-  this->value = input;
-  this->optype = opType;
-  fillOperatorMembers();
+Operator::Operator(std::string input, OperatorType op_type) {
+  value_ = input;
+  op_type_ = op_type;
+  FillOperatorMembers();
 }
 
 Operator::~Operator(){};
 
-OperatorType Operator::Type() const { return optype; }
+OperatorType Operator::Type() const { return op_type_; }
 
-std::string Operator::Text() const { return value; }
+std::string Operator::Text() const { return value_; }
 
-bool Operator::IsOverloadable() const { return overloadable; }
+bool Operator::IsOverloadable() const { return overloadable_; }
 
-int Operator::Precedence() const { return precedence; }
+int Operator::Precedence() const { return precedence_; }
 
-void Operator::fillOperatorMembers() {
-  switch (optype) {
+void Operator::FillOperatorMembers() {
+  switch (op_type_) {
     case OperatorType::STAR:
     case OperatorType::SLASH:
-      precedence = 6;
-      overloadable = false;
+      precedence_ = 6;
+      overloadable_ = false;
       break;
     case OperatorType::PLUS:
     case OperatorType::MINUS:
-      precedence = 5;
-      overloadable = false;
+      precedence_ = 5;
+      overloadable_ = false;
       break;
     case OperatorType::NOT:
-      precedence = 5;
-      overloadable = true;
+      precedence_ = 5;
+      overloadable_ = true;
       break;
     case OperatorType::L_PARENTHESIS:
     case OperatorType::R_PARENTHESIS:
-      precedence = 4;
-      overloadable = false;
+      precedence_ = 4;
+      overloadable_ = false;
       break;
     case OperatorType::L_BRACE:
     case OperatorType::R_BRACE:
-      precedence = 3;
-      overloadable = false;
+      precedence_ = 3;
+      overloadable_ = false;
       break;
     case OperatorType::ASSIGN:
-      precedence = 2;
-      overloadable = true;
+      precedence_ = 2;
+      overloadable_ = true;
       break;
     case OperatorType::EQUAL:
     case OperatorType::NOT_EQUAL:
-      precedence = 1;
-      overloadable = false;
+      precedence_ = 1;
+      overloadable_ = false;
       break;
     default:
-      precedence = 7;
-      overloadable = false;
+      precedence_ = 7;
+      overloadable_ = false;
   }
 }
 
@@ -81,15 +81,15 @@ OperatorType Operator::GetOperatorType(std::string input) {
   if (input == "!") return OperatorType::NOT;
   if (input == "!=") return OperatorType::NOT_EQUAL;
 
-  std::stringstream ssInvalidOpMsg;
-  ssInvalidOpMsg << "Operator: \'" << input << "\' is not allowed";
-  throw InvalidOperatorTypeException(ssInvalidOpMsg.str());
+  std::stringstream ss_invalid_op_msg;
+  ss_invalid_op_msg << "Operator: \'" << input << "\' is not allowed";
+  throw InvalidOperatorTypeException(ss_invalid_op_msg.str());
 }
 
-OperatorPtr GenerateOp(const std::string& input) {
+OperatorPtr GenerateOp(const std::string &input) {
   return OperatorPtr(new Operator(input));
 }
 
-OperatorPtr GenerateOp(const std::string& input, OperatorType opType) {
-  return OperatorPtr(new Operator(input, opType));
+OperatorPtr GenerateOp(const std::string &input, OperatorType op_type) {
+  return OperatorPtr(new Operator(input, op_type));
 }

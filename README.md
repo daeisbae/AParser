@@ -20,6 +20,9 @@ chmod +x AParser
 ## Learning Grammar Syntax of AParser
 Refer [AParser Language Syntax Documentation](https://github.com/daeisbae/AParser/blob/main/docs/README.md)
 
+## Coding Style
+This project aims to follow [Google C++ Code Convention](https://google.github.io/styleguide/cppguide.html)
+
 ## Project Structure
 ```
 AParser

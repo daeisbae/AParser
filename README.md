@@ -1,6 +1,7 @@
 # AParser
-This is a programming language project that is **not working**. But will be aiming to be fully working.
-It's a project built to understand the concept of how lexers and parsers work in detail.
+This is a experimental programming language project. It's a project built to understand the concept of how lexers and parsers work in detail.
+
+**Current Status:** Include documentation and refactor code
 
 ## How to build and execute the program
 ### Prerequisit

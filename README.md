@@ -4,7 +4,7 @@ This is a experimental programming language project. It's a project built to und
 **Current Status:** Include documentation and refactor code
 
 ## How to build and execute the program
-### Prerequisit
+### Prerequisite
 - CMake
 - GCC/G++
 

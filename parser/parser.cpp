@@ -93,7 +93,7 @@ ExpressionPtr Parser::ParsePrimaryExpression() {
       returned_expr = ExpressionPtr(new BooleanExpression(Eat()->Text()));
       break;
     case TokenType::OPERATOR:
-      switch (curr_tok->OpPtr()->Type()) {
+      switch (Peek()->OpPtr()->Type()) {
         case OperatorType::L_PARENTHESIS:
           Eat();
           ParseWhitespaceExpression();
@@ -105,10 +105,10 @@ ExpressionPtr Parser::ParsePrimaryExpression() {
         case OperatorType::PLUS:
         case OperatorType::MINUS: {
           int sign = 1;
-          while (curr_tok->Type() == TokenType::OPERATOR &&
-                 (curr_tok->OpPtr()->Type() == OperatorType::PLUS ||
-                  curr_tok->OpPtr()->Type() == OperatorType::MINUS)) {
-            if (curr_tok->OpPtr()->Type() == OperatorType::MINUS) {
+          while (Peek()->Type() == TokenType::OPERATOR &&
+                 (Peek()->OpPtr()->Type() == OperatorType::PLUS ||
+                  Peek()->OpPtr()->Type() == OperatorType::MINUS)) {
+            if (Peek()->OpPtr()->Type() == OperatorType::MINUS) {
               sign *= -1;
             }
             Eat();
@@ -148,6 +148,7 @@ ExpressionPtr Parser::ParseAdditionExpression() {
     ParseWhitespaceExpression();
 
     left = ExpressionPtr(new BinaryExpression(left, op_val, right));
+    curr_tok = Peek();
   }
 
   return left;
@@ -167,14 +168,14 @@ ExpressionPtr Parser::ParseMultiplicationExpression() {
     ParseWhitespaceExpression();
 
     left = ExpressionPtr(new BinaryExpression(left, op_val, right));
+    curr_tok = Peek();
   }
 
   return left;
 }
 
 ExpressionPtr Parser::ParseWhitespaceExpression() {
-  TokenPtr curr_tok = tok_queue_.front();
-  if (curr_tok->Type() == TokenType::WHITESPACE)
+  if (Peek()->Type() == TokenType::WHITESPACE)
     return ExpressionPtr(new WhitespaceExpression(Eat()->Text()));
 
   return ExpressionPtr(nullptr);

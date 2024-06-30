@@ -246,6 +246,7 @@ ExpressionPtr Parser::ParseComparisonExpression() {
     ParseWhitespaceExpression();
 
     left = ExpressionPtr(new ComparisonExpression(left, op_val, right));
+    next_tok = Peek();
   }
 
   return left;

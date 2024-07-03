@@ -5,17 +5,25 @@ This is a experimental programming language project. It's a project built to und
 
 ## How to build and execute the program
 ### Prerequisite
-- CMake
-- GCC/G++
+- CMake (If using Manual installtion)
+- GCC/G++ (If using Manual installtion)
+- Docker (If using docker based installation)
 
-### Installation
+### Manual Installation
 ```sh
 git clone https://github.com/daeisbae/AParser.git
-cd AParser
+cd ~/AParser
 cmake .
 cmake --build .
 chmod +x AParser
 ./AParser
+```
+
+### Docker Based Installation
+```sh
+cd ~/Aparser
+docker build -t aparser .
+docker run --rm -it --name aparser aparser
 ```
 
 ## Learning Grammar Syntax of AParser

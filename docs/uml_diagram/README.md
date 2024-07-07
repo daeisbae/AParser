@@ -85,3 +85,115 @@ classDiagram
 | PLUS, MINUS                 | 5          |
 | STAR, SLASH                 | 6          |
 | Others                      | 7          |
+
+
+## AST and Parser
+```mermaid
+---
+title: AParser - AST and Parsing
+---
+classDiagram
+    Parser "1" --> "1" Program : "Produces"
+    Parser "1" --> "1..n" Statement : "Parses"
+    Parser "1" --> "1..n" Expression : "Parses"
+    Program "1" --> "1..n" Statement : "Contains"
+    Statement <|-- Expression
+    Statement <|-- VariableDeclarationStatement
+    Expression <|-- BinaryExpression
+    Expression <|-- IdentifierExpression
+    Expression <|-- IntegerExpression
+    Expression <|-- WhitespaceExpression
+    Expression <|-- NullExpression
+    Expression <|-- BooleanExpression
+    Expression <|-- VariableAssignExpression
+    Expression <|-- ComparisonExpression
+
+    class Parser{
+        -tok_queue_: std::queue<TokenPtr>
+        +ProduceAST(tokenQueue: std::queue<TokenPtr>&): Program
+        -ParseStatement(): StatementPtr
+        -ParseExpression(): ExpressionPtr
+        -ParsePrimaryExpression(): ExpressionPtr
+        -ParseAdditionExpression(): ExpressionPtr
+        -ParseMultiplicationExpression(): ExpressionPtr
+        -ParseWhitespaceExpression(): ExpressionPtr
+        -ParseIdentifierDeclarationExpression(): StatementPtr
+        -ParseIdentifierAssignmentExpression(): ExpressionPtr
+        -ParseComparisonExpression(): ExpressionPtr
+    }
+
+    class Program{
+        +body_: std::queue<StatementPtr>
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class Statement{
+        <<abstract>>
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class Expression{
+        <<abstract>>
+    }
+
+    class VariableDeclarationStatement{
+        +identifier_: string
+        +value_: ExpressionPtr
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class BinaryExpression{
+        +left_: ExpressionPtr
+        +right_: ExpressionPtr
+        +op_: string
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class IdentifierExpression{
+        +identifier_: string
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class IntegerExpression{
+        +tok_value_: int
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class WhitespaceExpression{
+        +tok_value_: string
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class NullExpression{
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class BooleanExpression{
+        +boolean_: string
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class VariableAssignExpression{
+        +Name: string
+        +Value: StatementPtr
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+
+    class ComparisonExpression{
+        +left_: ExpressionPtr
+        +op_: string
+        +right_: ExpressionPtr
+        +Type(): NodeType
+        +PrintOstream(out: std::ostream&): void
+    }
+```

@@ -21,6 +21,7 @@ chmod +x AParser
 
 ### Docker Based Installation
 ```sh
+git clone https://github.com/daeisbae/AParser.git
 cd ~/Aparser
 docker build -t aparser .
 docker run --rm -it --name aparser aparser

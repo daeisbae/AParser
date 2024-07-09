@@ -195,3 +195,54 @@ classDiagram
         +PrintOstream(out: std::ostream&): void
     }
 ```
+
+## Interpretation - Evaluator of AST Tree
+```mermaid
+---
+title: AParser - Runtime (Evaluation - Interpretation of AST tree)
+---
+
+classDiagram
+    Statement <|-- Expression
+    Statement <|-- Program
+    Evaluater --> Environment
+    Evaluater --> Program
+    Environment --> RuntimeValue
+    
+    class Statement {
+        <<abstract>>
+        +Type() NodeType
+        +PrintOstream(out)
+    }
+    class Expression {
+        <<abstract>>
+    }
+    class Program {
+        +body_ : Queue~StatementPtr~
+        +Type() NodeType
+        +PrintOstream(out)
+    }
+    class RuntimeValue {
+        <<abstract>>
+        +Type() ValueType
+        +Value() String
+        +PrintOstream(out)
+    }
+    class Environment {
+        -var_map_ : unordered_map~string, RuntimeValuePtr~
+        +DefineVariable(name, runtimeValue)
+        +AssignVariable(name, runtimeValue)
+        +GetRuntimeValue(name) RuntimeValuePtr
+    }
+    class Evaluater {
+        -instructions_ : Program
+        -env_ : Environment
+        +EvaluateProgram(instructions) String
+        -Evaluate(currStmt) RuntimeValuePtr
+        -EvaluateBinaryExpression(bin_expr) RuntimeValuePtr
+        -EvaluateNumericBinaryExpression(lhs, rhs, op) NumberValue
+        -EvaluateDefiningIdentifierExpression(varDeclStmt) RuntimeValuePtr
+        -EvaluateAssignIdentifierExpression(varAssignExpr) RuntimeValuePtr
+        -EvaluateComparisonExpression(compareExpr) RuntimeValuePtr
+    }
+```

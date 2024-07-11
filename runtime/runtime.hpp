@@ -26,13 +26,18 @@ class NullValue : public RuntimeValue {
 
 class NumberValue : public RuntimeValue {
  private:
-  int number_;
+  double number_;
 
  public:
-  NumberValue(int number) : number_(number){};
+  NumberValue(double number) : number_(number){};
 
   ValueType Type() const { return ValueType::NUMBER; }
-  std::string Value() const { return std::to_string(number_); }
+  std::string Value() const {
+    // check the floating point, if there is only 0 after the decimal point,
+    // convert to integer
+    return number_ == (int)number_ ? std::to_string((int)number_)
+                                   : std::to_string(number_);
+  }
 };
 
 class BooleanValue : public RuntimeValue {

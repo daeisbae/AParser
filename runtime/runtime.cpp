@@ -108,9 +108,9 @@ RuntimeValuePtr Evaluater::EvaluateBinaryExpression(
 NumberValue Evaluater::EvaluateNumericBinaryExpression(NumberValue lhs,
                                                        NumberValue rhs,
                                                        std::string op) {
-  int result = 0;
-  int lhs_val = std::stoi(lhs.Value());
-  int rhs_val = std::stoi(rhs.Value());
+  double result = 0;
+  double lhs_val = std::stod(lhs.Value());
+  double rhs_val = std::stod(rhs.Value());
 
   if (op == "+") {
     result = lhs_val + rhs_val;

@@ -13,7 +13,7 @@ enum class TokenType {
   IDENTIFIER,
   WHITESPACE,
   SET,
-  INTEGER,
+  NUMBER,
   STRING,
   TRUE,
   FALSE,

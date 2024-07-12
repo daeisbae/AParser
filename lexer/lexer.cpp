@@ -58,7 +58,17 @@ std::string Lexer::ReadStr() {
 std::string Lexer::ReadNum() {
   std::string num_val;
 
-  while (!text_queue_.empty() && std::isdigit(text_queue_.front())) {
+  // Used to check if there is double dot inside the number.
+  bool isDecimal = false;
+  while (!text_queue_.empty() &&
+         (std::isdigit(text_queue_.front()) || text_queue_.front() == '.')) {
+    if (isDecimal && text_queue_.front() == '.') {
+      std::stringstream ssInvalidStrMsg;
+      ssInvalidStrMsg << "Double value can't have two dot. Error in Original \""
+                      << num_val << "\" when adding \"" << text_queue_.front()
+                      << "\"";
+      throw WrongLexingException(ssInvalidStrMsg.str());
+    }
     num_val.push_back(text_queue_.front());
     text_queue_.pop();
   };
@@ -172,7 +182,7 @@ TokenPtr Lexer::NextToken() {
     case 48 ... 57:  // 0-9
       // Validate if it is number
       tok_ptr =
-          GenerateToken(ReadNum(), TokenType::INTEGER, OperatorPtr(nullptr));
+          GenerateToken(ReadNum(), TokenType::NUMBER, OperatorPtr(nullptr));
       break;
     case 65 ... 90:   // A-Z
     case 97 ... 122:  // a-z

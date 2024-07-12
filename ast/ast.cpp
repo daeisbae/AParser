@@ -19,8 +19,8 @@ std::string NodeEnumToString(NodeType node_type) {
     case NodeType::IdentifierExpr:
       type_str = "IdentifierExpression";
       break;
-    case NodeType::IntegerExpr:
-      type_str = "IntegerExpression";
+    case NodeType::NumberExpr:
+      type_str = "NumberExpression";
       break;
     case NodeType::BinaryExpr:
       type_str = "BinaryExpression";
@@ -114,7 +114,7 @@ void IdentifierExpression::PrintOstream(std::ostream &out) const {
   out << ")";
 }
 
-void IntegerExpression::PrintOstream(std::ostream &out) const {
+void NumberExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " (";
 
   out << "Value : " << tok_value_;

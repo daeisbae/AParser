@@ -28,8 +28,8 @@ std::string Token::PrintTokenType(TokenType tok_type) {
       return "Whitespace";
     case TokenType::SET:
       return "Set";
-    case TokenType::INTEGER:
-      return "Integer";
+    case TokenType::NUMBER:
+      return "Number";
     case TokenType::STRING:
       return "String";
     case TokenType::TRUE:

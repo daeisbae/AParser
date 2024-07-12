@@ -4,9 +4,9 @@
 
 #include "runtime.hpp"
 
-TEST(EvaluaterTest, IntegerEvaluation) {
+TEST(EvaluaterTest, NumberEvaluation) {
   std::queue<StatementPtr> stmtqueue;
-  stmtqueue.push(std::make_shared<IntegerExpression>(1));
+  stmtqueue.push(std::make_shared<NumberExpression>(1));
 
   Evaluater test1 = Evaluater();
   std::string test1Result = test1.EvaluateProgram(stmtqueue);
@@ -54,8 +54,8 @@ TEST(EvaluaterTest, BinaryExpression) {
     std::queue<StatementPtr> stmtqueue;
     // 1 + 2
     stmtqueue.push(std::make_shared<BinaryExpression>(
-        std::make_shared<IntegerExpression>(1), "+",
-        std::make_shared<IntegerExpression>(2)));
+        std::make_shared<NumberExpression>(1), "+",
+        std::make_shared<NumberExpression>(2)));
 
     Evaluater test1 = Evaluater();
     std::string test1Result = test1.EvaluateProgram(stmtqueue);
@@ -67,8 +67,8 @@ TEST(EvaluaterTest, BinaryExpression) {
     std::queue<StatementPtr> stmtqueue2;
     // 0 - 2
     stmtqueue2.push(std::make_shared<BinaryExpression>(
-        std::make_shared<IntegerExpression>(0), "-",
-        std::make_shared<IntegerExpression>(2)));
+        std::make_shared<NumberExpression>(0), "-",
+        std::make_shared<NumberExpression>(2)));
 
     Evaluater test2 = Evaluater();
     std::string test2Result = test2.EvaluateProgram(stmtqueue2);
@@ -80,10 +80,10 @@ TEST(EvaluaterTest, BinaryExpression) {
     std::queue<StatementPtr> stmtqueue3;
     // 3 * ( 3 + 2 )
     stmtqueue3.push(std::make_shared<BinaryExpression>(
-        std::make_shared<IntegerExpression>(3), "*",
+        std::make_shared<NumberExpression>(3), "*",
         std::make_shared<BinaryExpression>(
-            std::make_shared<IntegerExpression>(3), "+",
-            std::make_shared<IntegerExpression>(2))));
+            std::make_shared<NumberExpression>(3), "+",
+            std::make_shared<NumberExpression>(2))));
 
     Evaluater test3 = Evaluater();
     std::string test3Result = test3.EvaluateProgram(stmtqueue3);
@@ -95,9 +95,9 @@ TEST(EvaluaterTest, BinaryExpression) {
     std::queue<StatementPtr> stmtqueue4;
     // 4 - ( 3 + null )
     stmtqueue4.push(std::make_shared<BinaryExpression>(
-        std::make_shared<IntegerExpression>(4), "-",
+        std::make_shared<NumberExpression>(4), "-",
         std::make_shared<BinaryExpression>(
-            std::make_shared<IntegerExpression>(3), "+",
+            std::make_shared<NumberExpression>(3), "+",
             std::make_shared<NullExpression>())));
 
     Evaluater test4 = Evaluater();
@@ -163,7 +163,7 @@ TEST(EvaluaterTest, BinaryExpression) {
     // true + 10
     stmtqueue9.push(std::make_shared<BinaryExpression>(
         std::make_shared<BooleanExpression>("true"), "+",
-        std::make_shared<IntegerExpression>(10)));
+        std::make_shared<NumberExpression>(10)));
 
     Evaluater test9 = Evaluater();
     std::string test9Result = test9.EvaluateProgram(stmtqueue9);
@@ -176,7 +176,7 @@ TEST(EvaluaterTest, BinaryExpression) {
     // false / 1
     stmtqueue10.push(std::make_shared<BinaryExpression>(
         std::make_shared<BooleanExpression>("false"), "/",
-        std::make_shared<IntegerExpression>(1)));
+        std::make_shared<NumberExpression>(1)));
 
     Evaluater test10 = Evaluater();
     std::string test10Result = test10.EvaluateProgram(stmtqueue10);
@@ -192,7 +192,7 @@ TEST(EvaluaterTest, VariableDeclaration) {
     // set hello = 1
     // hello
     stmtqueue.push(std::make_shared<VariableDeclarationStatement>(
-        "hello", std::make_shared<IntegerExpression>(1)));
+        "hello", std::make_shared<NumberExpression>(1)));
     stmtqueue.push(std::make_shared<IdentifierExpression>("hello"));
 
     Evaluater test1 = Evaluater();
@@ -237,9 +237,9 @@ TEST(EvaluaterTest, VariableAssignment) {
     // hello = 321
     // hello
     stmtqueue.push(std::make_shared<VariableDeclarationStatement>(
-        "hello", std::make_shared<IntegerExpression>(1)));
+        "hello", std::make_shared<NumberExpression>(1)));
     stmtqueue.push(std::make_shared<VariableAssignExpression>(
-        "hello", std::make_shared<IntegerExpression>(321)));
+        "hello", std::make_shared<NumberExpression>(321)));
     stmtqueue.push(std::make_shared<IdentifierExpression>("hello"));
 
     Evaluater test1 = Evaluater();
@@ -277,9 +277,9 @@ TEST(EvaluaterTest, VariableAssignment) {
     stmtqueue3.push(std::make_shared<VariableDeclarationStatement>(
         "testingVar2", std::make_shared<BooleanExpression>("false")));
     stmtqueue3.push(std::make_shared<VariableDeclarationStatement>(
-        "testingVar3", std::make_shared<IntegerExpression>(123)));
+        "testingVar3", std::make_shared<NumberExpression>(123)));
     stmtqueue3.push(std::make_shared<VariableAssignExpression>(
-        "testingVar2", std::make_shared<IntegerExpression>(521)));
+        "testingVar2", std::make_shared<NumberExpression>(521)));
     stmtqueue3.push(std::make_shared<VariableDeclarationStatement>(
         "testingVar4", std::make_shared<NullExpression>()));
     stmtqueue3.push(std::make_shared<IdentifierExpression>("testingVar2"));
@@ -297,8 +297,8 @@ TEST(EvaluaterTest, ValueComparison) {
     std::queue<StatementPtr> stmtqueue;
     // 1234 == 1234
     stmtqueue.push(std::make_shared<ComparisonExpression>(
-        std::make_shared<IntegerExpression>(1234),
-        "==", std::make_shared<IntegerExpression>(1234)));
+        std::make_shared<NumberExpression>(1234),
+        "==", std::make_shared<NumberExpression>(1234)));
 
     Evaluater test1 = Evaluater();
     std::string test1Result = test1.EvaluateProgram(stmtqueue);
@@ -310,8 +310,8 @@ TEST(EvaluaterTest, ValueComparison) {
     std::queue<StatementPtr> stmtqueue2;
     // 10 != 11
     stmtqueue2.push(std::make_shared<ComparisonExpression>(
-        std::make_shared<IntegerExpression>(10),
-        "!=", std::make_shared<IntegerExpression>(11)));
+        std::make_shared<NumberExpression>(10),
+        "!=", std::make_shared<NumberExpression>(11)));
 
     Evaluater test2 = Evaluater();
     std::string test2Result = test2.EvaluateProgram(stmtqueue2);
@@ -337,10 +337,10 @@ TEST(EvaluaterTest, ValueComparison) {
     // set hello = 1
     // hello == 1
     stmtqueue4.push(std::make_shared<VariableDeclarationStatement>(
-        "hello", std::make_shared<IntegerExpression>(1)));
+        "hello", std::make_shared<NumberExpression>(1)));
     stmtqueue4.push(std::make_shared<ComparisonExpression>(
         std::make_shared<IdentifierExpression>("hello"),
-        "==", std::make_shared<IntegerExpression>(1)));
+        "==", std::make_shared<NumberExpression>(1)));
 
     Evaluater test4 = Evaluater();
     std::string test4Result = test4.EvaluateProgram(stmtqueue4);
@@ -353,7 +353,7 @@ TEST(EvaluaterTest, ValueComparison) {
     // true == 1
     stmtqueue5.push(std::make_shared<ComparisonExpression>(
         std::make_shared<BooleanExpression>("true"),
-        "==", std::make_shared<IntegerExpression>(1)));
+        "==", std::make_shared<NumberExpression>(1)));
 
     Evaluater test5 = Evaluater();
     std::string test5Result = test5.EvaluateProgram(stmtqueue5);
@@ -366,7 +366,7 @@ TEST(EvaluaterTest, ValueComparison) {
     // false == 0
     stmtqueue6.push(std::make_shared<ComparisonExpression>(
         std::make_shared<BooleanExpression>("false"),
-        "==", std::make_shared<IntegerExpression>(0)));
+        "==", std::make_shared<NumberExpression>(0)));
 
     Evaluater test6 = Evaluater();
     std::string test6Result = test6.EvaluateProgram(stmtqueue6);
@@ -379,7 +379,7 @@ TEST(EvaluaterTest, ValueComparison) {
     // false == -1
     stmtqueue7.push(std::make_shared<ComparisonExpression>(
         std::make_shared<BooleanExpression>("false"),
-        "==", std::make_shared<IntegerExpression>(-1)));
+        "==", std::make_shared<NumberExpression>(-1)));
 
     Evaluater test7 = Evaluater();
     std::string test7Result = test7.EvaluateProgram(stmtqueue7);
@@ -391,7 +391,7 @@ TEST(EvaluaterTest, ValueComparison) {
     std::queue<StatementPtr> stmtqueue8;
     // -10 == false
     stmtqueue8.push(std::make_shared<ComparisonExpression>(
-        std::make_shared<IntegerExpression>(-10),
+        std::make_shared<NumberExpression>(-10),
         "==", std::make_shared<BooleanExpression>("false")));
 
     Evaluater test8 = Evaluater();
@@ -404,7 +404,7 @@ TEST(EvaluaterTest, ValueComparison) {
     std::queue<StatementPtr> stmtqueue9;
     // 123 != false
     stmtqueue9.push(std::make_shared<ComparisonExpression>(
-        std::make_shared<IntegerExpression>(123),
+        std::make_shared<NumberExpression>(123),
         "!=", std::make_shared<BooleanExpression>("false")));
 
     Evaluater test9 = Evaluater();

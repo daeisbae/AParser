@@ -45,7 +45,7 @@ TEST(LexerTest, AssignIntegerToVariable) {
 
   // 7
   EXPECT_EQ(*(test1.NextToken()),
-            *(GenerateToken("2", TokenType::INTEGER, OperatorPtr(nullptr))));
+            *(GenerateToken("2", TokenType::NUMBER, OperatorPtr(nullptr))));
 
   // 8
   EXPECT_EQ(*(test1.NextToken()),
@@ -113,7 +113,7 @@ TEST(LexerTest, Function) {
 
   // 14
   EXPECT_EQ(*(test1.NextToken()),
-            *(GenerateToken("123", TokenType::INTEGER, OperatorPtr(nullptr))));
+            *(GenerateToken("123", TokenType::NUMBER, OperatorPtr(nullptr))));
 
   // 15
   EXPECT_EQ(*(test1.NextToken()),

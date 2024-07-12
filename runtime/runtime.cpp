@@ -132,9 +132,9 @@ RuntimeValuePtr Evaluater::Evaluate(StatementPtr curr_stmt) {
     case NodeType::NullExpr:
       matchValue = std::make_unique<NullValue>();
       break;
-    case NodeType::IntegerExpr: {
-      std::shared_ptr<IntegerExpression> int_expr =
-          std::dynamic_pointer_cast<IntegerExpression>(curr_stmt);
+    case NodeType::NumberExpr: {
+      std::shared_ptr<NumberExpression> int_expr =
+          std::dynamic_pointer_cast<NumberExpression>(curr_stmt);
       if (!int_expr) {
         ss_invalid_stmt_msg
             << "Failed to cast StatementPtr to IntegerExpressionPtr : "

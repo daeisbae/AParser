@@ -14,7 +14,7 @@ class ComparisonExpression;
 class Expression;
 class BinaryExpression;
 class IdentifierExpression;
-class IntegerExpression;
+class NumberExpression;
 class WhitespaceExpression;
 class NullExpression;
 
@@ -28,7 +28,7 @@ enum class NodeType {
 
   // Expression
   IdentifierExpr,
-  IntegerExpr,
+  NumberExpr,
   BinaryExpr,
   WhitespaceExpr,
   BooleanExpr,
@@ -114,21 +114,21 @@ class IdentifierExpression : public Expression {
   }
 };
 
-class IntegerExpression : public Expression {
+class NumberExpression : public Expression {
  public:
-  IntegerExpression(int tok_value) : tok_value_(tok_value){};
+  NumberExpression(double tok_value) : tok_value_(tok_value){};
 
-  virtual ~IntegerExpression() = default;
+  virtual ~NumberExpression() = default;
 
-  int tok_value_;
+  double tok_value_;
 
-  NodeType Type() const override { return NodeType::IntegerExpr; }
+  NodeType Type() const override { return NodeType::NumberExpr; }
 
   void PrintOstream(std::ostream &out) const override;
 
   friend std::ostream &operator<<(std::ostream &out,
-                                  const IntegerExpression &int_expr) {
-    int_expr.PrintOstream(out);
+                                  const NumberExpression &num_expr) {
+    num_expr.PrintOstream(out);
 
     return out;
   }

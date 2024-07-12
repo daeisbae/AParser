@@ -38,7 +38,7 @@ TokenPtr Parser::ExpectedTokenType(TokenType expected_type) {
   throw UnexpectedTokenParsedException(invalid_tok_msg.str());
 }
 
-Program Parser::ProduceAST(std::queue<TokenPtr>& tok_queue) {
+Program Parser::ProduceAST(std::queue<TokenPtr> &tok_queue) {
   tok_queue_ = tok_queue;
   Program program = Program();
 
@@ -77,9 +77,9 @@ ExpressionPtr Parser::ParsePrimaryExpression() {
     case TokenType::IDENTIFIER:
       returned_expr = ExpressionPtr(new IdentifierExpression(Eat()->Text()));
       break;
-    case TokenType::INTEGER:
+    case TokenType::NUMBER:
       returned_expr =
-          ExpressionPtr(new IntegerExpression(std::stoi(Eat()->Text())));
+          ExpressionPtr(new NumberExpression(std::stod(Eat()->Text())));
       break;
     case TokenType::WHITESPACE:
       returned_expr = ExpressionPtr(new WhitespaceExpression(Eat()->Text()));
@@ -114,9 +114,9 @@ ExpressionPtr Parser::ParsePrimaryExpression() {
             Eat();
             ParseWhitespaceExpression();
           }
-          ExpectedTokenType(TokenType::INTEGER);
+          ExpectedTokenType(TokenType::NUMBER);
           returned_expr = ExpressionPtr(
-              new IntegerExpression(sign * std::stoi(Eat()->Text())));
+              new NumberExpression(sign * std::stod(Eat()->Text())));
           break;
         }
         default:

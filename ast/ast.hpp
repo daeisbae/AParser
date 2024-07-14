@@ -35,6 +35,7 @@ enum class NodeType {
   NullExpr,
   VariableAssignExpr,
   ComparisonExpr,
+  StringExpr,
 };
 
 std::string NodeEnumToString(NodeType node_type);
@@ -259,6 +260,26 @@ class ComparisonExpression : public Expression {
   friend std::ostream &operator<<(std::ostream &out,
                                   const ComparisonExpression &compare_expr) {
     compare_expr.PrintOstream(out);
+
+    return out;
+  }
+};
+
+class StringExpression : public Expression {
+ public:
+  StringExpression(std::string str) : tok_value_(str){};
+
+  std::string tok_value_;
+
+  virtual ~StringExpression() = default;
+
+  NodeType Type() const override { return NodeType::StringExpr; }
+
+  void PrintOstream(std::ostream &out) const override;
+
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const StringExpression &str_expr) {
+    str_expr.PrintOstream(out);
 
     return out;
   }

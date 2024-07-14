@@ -7,7 +7,7 @@
 
 #include "ast.hpp"
 
-enum class ValueType { NULLABLE, NUMBER, BOOLEAN };
+enum class ValueType { NULLABLE, NUMBER, BOOLEAN, STRING };
 
 class RuntimeValue {
  public:
@@ -49,6 +49,17 @@ class BooleanValue : public RuntimeValue {
 
   ValueType Type() const { return ValueType::BOOLEAN; }
   std::string Value() const { return boolean_; }
+};
+
+class StringValue : public RuntimeValue {
+ private:
+  std::string string_;
+
+ public:
+  StringValue(std::string string) : string_(string){};
+
+  ValueType Type() const { return ValueType::STRING; }
+  std::string Value() const { return string_; }
 };
 
 typedef std::shared_ptr<RuntimeValue> RuntimeValuePtr;

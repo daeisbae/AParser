@@ -144,6 +144,18 @@ RuntimeValuePtr Evaluater::Evaluate(StatementPtr curr_stmt) {
       matchValue = std::make_unique<NumberValue>(int_expr->tok_value_);
       break;
     }
+    case NodeType::StringExpr: {
+      std::shared_ptr<StringExpression> string_expr =
+          std::dynamic_pointer_cast<StringExpression>(curr_stmt);
+      if (!string_expr) {
+        ss_invalid_stmt_msg
+            << "Failed to cast StatementPtr to StringExpressionPtr : "
+            << curr_stmt;
+        throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
+      }
+      matchValue = std::make_unique<StringValue>(string_expr->tok_value_);
+      break;
+    }
     case NodeType::BinaryExpr: {
       std::shared_ptr<BinaryExpression> binary_expr =
           std::dynamic_pointer_cast<BinaryExpression>(curr_stmt);

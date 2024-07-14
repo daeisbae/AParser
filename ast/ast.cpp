@@ -34,6 +34,9 @@ std::string NodeEnumToString(NodeType node_type) {
     case NodeType::BooleanExpr:
       type_str = "BooleanExpression";
       break;
+    case NodeType::StringExpr:
+      type_str = "StringExpression";
+      break;
     default:
       type_str = "InvalidExpression";
       break;
@@ -137,4 +140,9 @@ void NullExpression::PrintOstream(std::ostream &out) const {
 void BooleanExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " ( Value : '";
   out << boolean_ << "' )";
+}
+
+void StringExpression::PrintOstream(std::ostream &out) const {
+  out << NodeEnumToString(Type()) << " ( Value : '";
+  out << tok_value_ << "' )";
 }

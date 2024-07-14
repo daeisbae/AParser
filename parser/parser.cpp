@@ -92,6 +92,9 @@ ExpressionPtr Parser::ParsePrimaryExpression() {
     case TokenType::FALSE:
       returned_expr = ExpressionPtr(new BooleanExpression(Eat()->Text()));
       break;
+    case TokenType::STRING:
+      returned_expr = ExpressionPtr(new StringExpression(Eat()->Text()));
+      break;
     case TokenType::OPERATOR:
       switch (Peek()->OpPtr()->Type()) {
         case OperatorType::L_PARENTHESIS:

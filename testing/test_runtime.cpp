@@ -186,6 +186,53 @@ TEST(EvaluaterTest, BinaryExpression) {
   }
 }
 
+TEST(EvaluaterTest, StringExpression) {
+  {
+    std::queue<StatementPtr> stmtqueue;
+    // "hello"
+    stmtqueue.push(std::make_shared<StringExpression>("hello"));
+
+    Evaluater test1 = Evaluater();
+    std::string test1Result = test1.EvaluateProgram(stmtqueue);
+
+    // 1
+    EXPECT_EQ(test1Result, "hello");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue2;
+    // "   hello"
+    stmtqueue2.push(std::make_shared<StringExpression>("   hello"));
+
+    Evaluater test2 = Evaluater();
+    std::string test2Result = test2.EvaluateProgram(stmtqueue2);
+
+    // 2
+    EXPECT_EQ(test2Result, "   hello");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue3;
+    // "hello    "
+    stmtqueue3.push(std::make_shared<StringExpression>("hello    "));
+
+    Evaluater test3 = Evaluater();
+    std::string test3Result = test3.EvaluateProgram(stmtqueue3);
+
+    // 3
+    EXPECT_EQ(test3Result, "hello    ");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue4;
+    // "hello 😂 World"
+    stmtqueue4.push(std::make_shared<StringExpression>("hello 😂 World"));
+
+    Evaluater test4 = Evaluater();
+    std::string test4Result = test4.EvaluateProgram(stmtqueue4);
+
+    // 4
+    EXPECT_EQ(test4Result, "hello 😂 World");
+  }
+}
+
 TEST(EvaluaterTest, VariableDeclaration) {
   {
     std::queue<StatementPtr> stmtqueue;

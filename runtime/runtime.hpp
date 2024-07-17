@@ -1,7 +1,9 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
+#include <iomanip>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <unordered_map>
 
@@ -32,11 +34,31 @@ class NumberValue : public RuntimeValue {
   NumberValue(double number) : number_(number){};
 
   ValueType Type() const { return ValueType::NUMBER; }
-  std::string Value() const {
-    // check the floating point, if there is only 0 after the decimal point,
-    // convert to integer
-    return number_ == (int)number_ ? std::to_string((int)number_)
-                                   : std::to_string(number_);
+  std::string Value() const { return MaxDecimalNumberInStr(); }
+
+ private:
+  // Return the number until the longest decimal point available
+  std::string MaxDecimalNumberInStr() const {
+    std::stringstream num_to_str;
+    num_to_str << std::fixed << std::setprecision(16) << number_;
+    int max_decimal = 0;
+
+    std::string num_in_str = num_to_str.str();
+
+    // If it is an integer, return as an integer
+    if ((int)number_ == number_) {
+      return std::to_string((int)number_);
+    }
+
+    std::string decimal_in_str = num_in_str.substr(num_in_str.find(".") + 1);
+
+    for (std::string::size_type i = 0; i < decimal_in_str.size(); i++) {
+      if (decimal_in_str.at(i) != '0') {
+        max_decimal = i + 1;
+      }
+    }
+
+    return num_in_str.substr(0, num_in_str.find(".") + max_decimal + 1);
   }
 };
 

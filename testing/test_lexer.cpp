@@ -14,6 +14,53 @@ TEST(LexerTest, EmptyInput) {
             *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
 }
 
+TEST(LexerTest, Number) {
+  Lexer test1 = Lexer("2.0");
+
+  // 1
+  EXPECT_EQ(*(test1.NextToken()),
+            *(GenerateToken("2.0", TokenType::NUMBER, OperatorPtr(nullptr))));
+
+  // 2
+  EXPECT_EQ(*(test1.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+
+  Lexer test2 = Lexer("3");
+
+  // 1
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("3", TokenType::NUMBER, OperatorPtr(nullptr))));
+
+  // 2
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+
+  Lexer test3 = Lexer("-1.000001");
+
+  // 1
+  EXPECT_EQ(*(test3.NextToken()),
+            *(GenerateToken("-", TokenType::OPERATOR,
+                            GenerateOp("-", OperatorType::MINUS))));
+
+  EXPECT_EQ(*(test3.NextToken()), *(GenerateToken("1.000001", TokenType::NUMBER,
+                                                  OperatorPtr(nullptr))));
+
+  // 2
+  EXPECT_EQ(*(test3.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+
+  Lexer test4 = Lexer("3.000001112");
+
+  // 1
+  EXPECT_EQ(
+      *(test4.NextToken()),
+      *(GenerateToken("3.000001112", TokenType::NUMBER, OperatorPtr(nullptr))));
+
+  // 2
+  EXPECT_EQ(*(test4.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+}
+
 TEST(LexerTest, AssignIntegerToVariable) {
   Lexer test1 = Lexer("set hello = 2");
 

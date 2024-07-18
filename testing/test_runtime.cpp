@@ -5,14 +5,32 @@
 #include "runtime.hpp"
 
 TEST(EvaluaterTest, NumberEvaluation) {
-  std::queue<StatementPtr> stmtqueue;
-  stmtqueue.push(std::make_shared<NumberExpression>(1));
+  std::queue<StatementPtr> stmtqueue1;
+  stmtqueue1.push(std::make_shared<NumberExpression>(1));
 
   Evaluater test1 = Evaluater();
-  std::string test1Result = test1.EvaluateProgram(stmtqueue);
+  std::string test1Result = test1.EvaluateProgram(stmtqueue1);
 
   // 1
   EXPECT_EQ(test1Result, "1");
+
+  std::queue<StatementPtr> stmtqueue2;
+  stmtqueue2.push(std::make_shared<NumberExpression>(-1.000001));
+
+  Evaluater test2 = Evaluater();
+  std::string test2Result = test2.EvaluateProgram(stmtqueue2);
+
+  // 1
+  EXPECT_EQ(test2Result, "-1.0000009999999999");
+
+  std::queue<StatementPtr> stmtqueue3;
+  stmtqueue3.push(std::make_shared<NumberExpression>(-111.0000000001));
+
+  Evaluater test3 = Evaluater();
+  std::string test3Result = test3.EvaluateProgram(stmtqueue3);
+
+  // 1
+  EXPECT_EQ(test3Result, "-111.0000000001000018");
 }
 
 TEST(EvaluaterTest, BooleanEvaluation) {
@@ -183,6 +201,19 @@ TEST(EvaluaterTest, BinaryExpression) {
 
     // 10
     EXPECT_EQ(test10Result, "0");
+  }
+  {
+    std::queue<StatementPtr> stmtqueue11;
+    // 0.1 + 0.2
+    stmtqueue11.push(std::make_shared<BinaryExpression>(
+        std::make_shared<NumberExpression>(0.1), "+",
+        std::make_shared<NumberExpression>(0.2)));
+
+    Evaluater test11 = Evaluater();
+    std::string test11Result = test11.EvaluateProgram(stmtqueue11);
+
+    // 11
+    EXPECT_EQ(test11Result, "0.3");
   }
 }
 

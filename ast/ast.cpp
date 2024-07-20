@@ -1,5 +1,7 @@
 #include "ast.hpp"
 
+#include <ostream>
+
 std::string NodeEnumToString(NodeType node_type) {
   std::string type_str;
 
@@ -36,6 +38,9 @@ std::string NodeEnumToString(NodeType node_type) {
       break;
     case NodeType::StringExpr:
       type_str = "StringExpression";
+      break;
+    case NodeType::NotExpr:
+      type_str = "NotExpression";
       break;
     default:
       type_str = "InvalidExpression";
@@ -135,6 +140,16 @@ void WhitespaceExpression::PrintOstream(std::ostream &out) const {
 
 void NullExpression::PrintOstream(std::ostream &out) const {
   out << NodeEnumToString(Type()) << " ( Value : 'NULL' )";
+}
+
+void NotExpression::PrintOstream(std::ostream &out) const {
+  out << NodeEnumToString(Type()) << " (";
+
+  out << "Value : '";
+
+  expr_->PrintOstream(out);
+
+  out << "' )";
 }
 
 void BooleanExpression::PrintOstream(std::ostream &out) const {

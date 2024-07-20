@@ -122,6 +122,13 @@ ExpressionPtr Parser::ParsePrimaryExpression() {
               new NumberExpression(sign * std::stod(Eat()->Text())));
           break;
         }
+        case OperatorType::NOT: {
+          Eat();
+          ParseWhitespaceExpression();
+          returned_expr = ExpressionPtr(new NotExpression(ParseExpression()));
+          ParseWhitespaceExpression();
+          break;
+        }
         default:
           ssInvalidTokMsg << "Unexpected Operator: \'" << *(curr_tok->OpPtr())
                           << "\' is not allowed";

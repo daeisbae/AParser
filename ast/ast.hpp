@@ -12,6 +12,7 @@ class VariableAssignExpression;
 class VariableDeclarationStatement;
 class ComparisonExpression;
 class Expression;
+class NotExpression;
 class BinaryExpression;
 class IdentifierExpression;
 class NumberExpression;
@@ -33,6 +34,7 @@ enum class NodeType {
   WhitespaceExpr,
   BooleanExpr,
   NullExpr,
+  NotExpr,
   VariableAssignExpr,
   ComparisonExpr,
   StringExpr,
@@ -188,6 +190,26 @@ class BooleanExpression : public Expression {
   friend std::ostream &operator<<(std::ostream &out,
                                   const BooleanExpression &bool_expr) {
     bool_expr.PrintOstream(out);
+
+    return out;
+  }
+};
+
+class NotExpression : public Expression {
+ public:
+  NotExpression(ExpressionPtr expr) : expr_(expr) {};
+
+  ExpressionPtr expr_;
+
+  virtual ~NotExpression() = default;
+
+  NodeType Type() const override { return NodeType::NotExpr; }
+
+  void PrintOstream(std::ostream &out) const override;
+
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const NotExpression &not_expr) {
+    not_expr.PrintOstream(out);
 
     return out;
   }

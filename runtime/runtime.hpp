@@ -102,6 +102,7 @@ class Evaluater {
   Program instructions_;
   Environment env_;
 
+  RuntimeValuePtr EvaluateNotExpression(NotExpression not_expr);
   RuntimeValuePtr EvaluateBinaryExpression(BinaryExpression bin_expr);
   NumberValue EvaluateNumericBinaryExpression(NumberValue lhs, NumberValue rhs,
                                               std::string op);

@@ -61,6 +61,29 @@ std::string Evaluater::EvaluateProgram(Program instructions) {
   return lasteval->Value();
 }
 
+RuntimeValuePtr Evaluater::EvaluateNotExpression(NotExpression not_expr) {
+  RuntimeValuePtr expr = Evaluate(not_expr.expr_);
+
+  if (expr->Type() == ValueType::BOOLEAN) {
+    std::shared_ptr<BooleanValue> bool_expr =
+        std::dynamic_pointer_cast<BooleanValue>(expr);
+    if (bool_expr->Value() == "true") {
+      return std::make_unique<BooleanValue>("false");
+    }
+    return std::make_unique<BooleanValue>("true");
+  }
+  if (expr->Type() == ValueType::NUMBER) {
+    std::shared_ptr<NumberValue> num_expr =
+        std::dynamic_pointer_cast<NumberValue>(expr);
+
+    if (stoi(num_expr->Value()) > 0) {
+      return std::make_unique<BooleanValue>("false");
+    }
+    return std::make_unique<BooleanValue>("true");
+  }
+  return std::make_unique<NullValue>();
+}
+
 RuntimeValuePtr Evaluater::EvaluateBinaryExpression(
     BinaryExpression binary_expr) {
   RuntimeValuePtr lhs = Evaluate(binary_expr.left_);
@@ -154,6 +177,18 @@ RuntimeValuePtr Evaluater::Evaluate(StatementPtr curr_stmt) {
         throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
       }
       matchValue = std::make_unique<StringValue>(string_expr->tok_value_);
+      break;
+    }
+    case NodeType::NotExpr: {
+      std::shared_ptr<NotExpression> not_expr =
+          std::dynamic_pointer_cast<NotExpression>(curr_stmt);
+      if (!not_expr) {
+        ss_invalid_stmt_msg
+            << "Failed to cast StatementPtr to NotExpressionPtr : "
+            << curr_stmt;
+        throw UnexpectedStatementException(ss_invalid_stmt_msg.str());
+      }
+      matchValue = EvaluateNotExpression(*not_expr);
       break;
     }
     case NodeType::BinaryExpr: {

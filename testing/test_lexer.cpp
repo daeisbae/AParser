@@ -61,6 +61,55 @@ TEST(LexerTest, Number) {
             *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
 }
 
+TEST(LexerTest, NotOperator) {
+  Lexer test1 = Lexer("!true");
+
+  // 1
+  EXPECT_EQ(*(test1.NextToken()),
+            *(GenerateToken("!", TokenType::OPERATOR,
+                            GenerateOp("!", OperatorType::NOT))));
+
+  // 2
+  EXPECT_EQ(*(test1.NextToken()),
+            *(GenerateToken("true", TokenType::TRUE, OperatorPtr(nullptr))));
+
+  // 3
+  EXPECT_EQ(*(test1.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+
+  Lexer test2 = Lexer("true + !0");
+
+  // 1
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("true", TokenType::TRUE, OperatorPtr(nullptr))));
+
+  // 2
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken(" ", TokenType::WHITESPACE, OperatorPtr(nullptr))));
+
+  // 3
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("+", TokenType::OPERATOR,
+                            GenerateOp("+", OperatorType::PLUS))));
+
+  // 4
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken(" ", TokenType::WHITESPACE, OperatorPtr(nullptr))));
+
+  // 5
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("!", TokenType::OPERATOR,
+                            GenerateOp("!", OperatorType::NOT))));
+
+  // 6
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("0", TokenType::NUMBER, OperatorPtr(nullptr))));
+
+  // 7
+  EXPECT_EQ(*(test2.NextToken()),
+            *(GenerateToken("", TokenType::EOL, OperatorPtr(nullptr))));
+}
+
 TEST(LexerTest, AssignIntegerToVariable) {
   Lexer test1 = Lexer("set hello = 2");
 

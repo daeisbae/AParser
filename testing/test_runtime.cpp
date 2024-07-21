@@ -56,6 +56,70 @@ TEST(EvaluaterTest, BooleanEvaluation) {
   }
 }
 
+TEST(EvaluaterTest, NotEvaluation) {
+  std::queue<StatementPtr> stmtqueue1;
+  stmtqueue1.push(std::make_shared<NotExpression>(
+      std::make_shared<BooleanExpression>("true")));
+
+  Evaluater test1 = Evaluater();
+  std::string test1Result = test1.EvaluateProgram(stmtqueue1);
+
+  // 1
+  EXPECT_EQ(test1Result, "false");
+
+  std::queue<StatementPtr> stmtqueue2;
+  stmtqueue2.push(std::make_shared<NotExpression>(
+      std::make_shared<BooleanExpression>("false")));
+
+  Evaluater test2 = Evaluater();
+  std::string test2Result = test2.EvaluateProgram(stmtqueue2);
+
+  // 2
+  EXPECT_EQ(test2Result, "true");
+
+  std::queue<StatementPtr> stmtqueue3;
+  stmtqueue3.push(std::make_shared<NotExpression>(
+      std::make_shared<BooleanExpression>("0")));
+
+  Evaluater test3 = Evaluater();
+  std::string test3Result = test3.EvaluateProgram(stmtqueue3);
+
+  // 3
+  EXPECT_EQ(test3Result, "true");
+
+  std::queue<StatementPtr> stmtqueue4;
+  stmtqueue4.push(
+      std::make_shared<NotExpression>(std::make_shared<NotExpression>(
+          std::make_shared<BooleanExpression>("1"))));
+
+  Evaluater test4 = Evaluater();
+  std::string test4Result = test4.EvaluateProgram(stmtqueue4);
+
+  // 4
+  EXPECT_EQ(test4Result, "false");
+
+  std::queue<StatementPtr> stmtqueue5;
+  stmtqueue5.push(std::make_shared<NotExpression>(
+      std::make_shared<BooleanExpression>("-1")));
+
+  Evaluater test5 = Evaluater();
+  std::string test5Result = test5.EvaluateProgram(stmtqueue5);
+
+  // 5
+  EXPECT_EQ(test5Result, "true");
+
+  std::queue<StatementPtr> stmtqueue6;
+  stmtqueue6.push(
+      std::make_shared<NotExpression>(std::make_shared<NotExpression>(
+          std::make_shared<BooleanExpression>("10.111111111"))));
+
+  Evaluater test6 = Evaluater();
+  std::string test6Result = test6.EvaluateProgram(stmtqueue6);
+
+  // 6
+  EXPECT_EQ(test6Result, "false");
+}
+
 TEST(EvaluaterTest, NullEvaluation) {
   std::queue<StatementPtr> stmtqueue;
   stmtqueue.push(std::make_shared<NullExpression>());

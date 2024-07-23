@@ -7,9 +7,9 @@ description: Generate Doxygen documentation and deploy to GitHub Pages
 # events but only for the master branch
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:

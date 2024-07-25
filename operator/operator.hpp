@@ -1,5 +1,5 @@
 /**
- * @file operator.h
+ * @file operator.hpp
  * @brief Contains the Operator class and its related functions
  */
 #ifndef OPERATOR_H
